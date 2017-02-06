@@ -11,12 +11,21 @@ data = map(int, [x.strip() for x in data])
 
 time_init = datetime.datetime.now()
 
+def insertion_sort(l):
+    for i in xrange(1, len(l)):
+        j = i-1 
+        key = l[i]
+        while (l[j] > key) and (j >= 0):
+           l[j+1] = l[j]
+           j -= 1
+        l[j+1] = key
+
 def quickSort(arr):
     less = []
     pivotList = []
     more = []
-    if len(arr) <= 1:
-        return arr
+    if len(arr) <= 10:
+        return insertion_sort(arr)
     else:
         pivot = arr[int(random.uniform(0, len(arr)))]
         for i in arr:
@@ -36,4 +45,4 @@ print time_delta.total_seconds()
 
 file.close()
 
-quickSort(data) == sorted(data)
+#quickSort(data) == sorted(data)

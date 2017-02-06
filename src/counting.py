@@ -13,18 +13,17 @@ mini = min(data)
 maxi = max(data)
 
 
+time_init = datetime.datetime.now() 
 def countingSort(array, mn, mx):
-    time_init = datetime.datetime.now()
     count = defaultdict(int)
     for i in array:
         count[i] += 1
     result = []
     for j in range(mn,mx+1):
         result += [j]* count[j]
-    time_end = datetime.datetime.now()
-    time_delta = time_end - time_init
-    print time_delta.total_seconds()
     return result
- 
 
-countingSort(data, mini, maxi) == sorted(data)
+time_end = datetime.datetime.now()
+time_delta = time_end - time_init
+print time_delta.total_seconds()
+#countingSort(data, mini, maxi) == sorted(data)

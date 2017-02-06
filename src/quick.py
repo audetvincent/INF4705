@@ -35,4 +35,4 @@ print time_delta.total_seconds()
 
 file.close()
 
-quickSort(data) == sorted(data)
+#quickSort(data) == sorted(data)
