@@ -11,8 +11,8 @@
 #
 # Vous pouvez par après vous inspirer de ce script pour évaluer toutes les
 # séries avec tous les algorithmes.
-#"counting","quick","quickRandom",quickSeuil, "quickRandomSeuil"
-for algo in "counting"; do
+
+for algo in {"counting","quick","quickRandom","quickSeuil","quickRandomSeuil"}; do
     # Pour chaque fichier de série.
     for serie in {"serie1","serie2","serie3"}; do
         # Pour chaque exemplaire dans une série.
@@ -23,7 +23,7 @@ for algo in "counting"; do
             n=$(cat ${serie}/${ex} | wc -l)
             # Si jamais on mesure un temps, on l'insère dans le bon fichier.
             if [ t != "" ]; then
-                echo $n,$t >> ./${algo}_${serie}.csv
+                echo $n,$t >> result/${algo}_${serie}.csv
             fi
         done
     done
