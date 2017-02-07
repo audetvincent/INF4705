@@ -23,7 +23,7 @@ for algo in {"counting","quick","quickRandom","quickSeuil","quickRandomSeuil"}; 
             n=$(cat ${serie}/${ex} | wc -l)
             # Si jamais on mesure un temps, on l'insère dans le bon fichier.
             if [ t != "" ]; then
-                echo $n,$t >> result/${algo}_${serie}.csv
+                echo $n,$t >> results/raw/${algo}_${serie}.csv
             fi
         done
     done
