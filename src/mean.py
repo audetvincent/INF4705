@@ -32,30 +32,57 @@ for filename in os.listdir(raw_path):
             elif "500000" in row:
                 list_500000 += float(row[1])
 
-        print ("before mean : "+ str(list_1000))
-        list_1000 = list_1000 / 10
+        if "Random" not in filename:
+            print ("before mean : "+ str(list_1000))
+            list_1000 = list_1000 / 10
 
-        print ("after mean : " + str(list_1000))
+            print ("after mean : " + str(list_1000))
 
-        print ("before mean : " + str(list_5000))
-        list_5000 = list_5000 / 10
-        print ("after mean : " + str(list_5000))
+            print ("before mean : " + str(list_5000))
+            list_5000 = list_5000 / 10
+            print ("after mean : " + str(list_5000))
 
-        print ("before mean : " + str(list_10000))
-        list_10000 = list_10000 / 10
-        print ("after mean : " + str(list_10000))
+            print ("before mean : " + str(list_10000))
+            list_10000 = list_10000 / 10
+            print ("after mean : " + str(list_10000))
 
-        print ("before mean : " + str(list_50000))
-        list_50000 = list_50000 / 10
-        print ("after mean : " + str(list_50000))
+            print ("before mean : " + str(list_50000))
+            list_50000 = list_50000 / 10
+            print ("after mean : " + str(list_50000))
 
-        print ("before mean : " + str(list_100000))
-        list_100000 = list_100000 / 10
-        print ("after mean : " + str(list_100000))
+            print ("before mean : " + str(list_100000))
+            list_100000 = list_100000 / 10
+            print ("after mean : " + str(list_100000))
 
-        print ("before mean : " + str(list_500000))
-        list_500000 = list_500000 / 10
-        print ("after mean : " + str(list_500000))
+            print ("before mean : " + str(list_500000))
+            list_500000 = list_500000 / 10
+            print ("after mean : " + str(list_500000))
+
+        else:  
+            print ("before mean : "+ str(list_1000))
+            list_1000 = list_1000 / 100
+
+            print ("after mean : " + str(list_1000))
+
+            print ("before mean : " + str(list_5000))
+            list_5000 = list_5000 / 100
+            print ("after mean : " + str(list_5000))
+
+            print ("before mean : " + str(list_10000))
+            list_10000 = list_10000 / 100
+            print ("after mean : " + str(list_10000))
+
+            print ("before mean : " + str(list_50000))
+            list_50000 = list_50000 / 100
+            print ("after mean : " + str(list_50000))
+
+            print ("before mean : " + str(list_100000))
+            list_100000 = list_100000 / 100
+            print ("after mean : " + str(list_100000))
+
+            print ("before mean : " + str(list_500000))
+            list_500000 = list_500000 / 100
+            print ("after mean : " + str(list_500000))
 
         # Must finish the writing in csv file
         of = open(means_path+filename, 'w+')
