@@ -12,7 +12,7 @@
 # Vous pouvez par après vous inspirer de ce script pour évaluer toutes les
 # séries avec tous les algorithmes.
 
-for algo in {"counting","quick","quickRandom","quickSeuil","quickRandomSeuil"}; do
+for algo in {"counting","quick","quickSeuil"}; do
     # Pour chaque fichier de série.
     for serie in {"serie1","serie2","serie3"}; do
         # Pour chaque exemplaire dans une série.
@@ -25,6 +25,26 @@ for algo in {"counting","quick","quickRandom","quickSeuil","quickRandomSeuil"}; 
             if [ t != "" ]; then
                 echo $n,$t >> results/raw/${algo}_${serie}.csv
             fi
+        done
+    done
+done
+
+for algo in {"quickRandom","quickRandomSeuil"}; do
+    # Pour chaque fichier de série.
+    for serie in {"serie1","serie2","serie3"}; do
+        # Pour chaque exemplaire dans une série.
+        for ex in $(ls $serie); do
+	    # 10x pour les algorithmes aléatoires
+	    for i in {1..10}; do
+                # On receuille le temps d'exécution dans t.
+                t=$(timeout 180 ./tp.sh -a $algo -e ${serie}/${ex} -t)
+                # On évalue la taille de l'exemplaire.
+                n=$(cat ${serie}/${ex} | wc -l)
+                # Si jamais on mesure un temps, on l'insère dans le bon fichier.
+                if [ t != "" ]; then
+                    echo $n,$t >> results/raw/${algo}_${serie}.csv
+                fi
+	    done
         done
     done
 done
