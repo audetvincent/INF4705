@@ -12,8 +12,6 @@ data = map(int, [x.strip() for x in data])
 mini = min(data)
 maxi = max(data)
 
-
-time_init = datetime.datetime.now() 
 def countingSort(array, mn, mx):
     count = defaultdict(int)
     for i in array:
@@ -23,7 +21,14 @@ def countingSort(array, mn, mx):
         result += [j]* count[j]
     return result
 
+time_init = datetime.datetime.now() 
+result = countingSort(data, mini, maxi)
 time_end = datetime.datetime.now()
 time_delta = time_end - time_init
-print time_delta.total_seconds()
-#countingSort(data, mini, maxi) == sorted(data)
+
+if "-p" in sys.argv or "--print" in sys.argv:
+    for i in result:
+        print i
+
+if "-t" in sys.argv or "--time" in sys.argv:
+    print time_delta.total_seconds()

@@ -9,7 +9,6 @@ file = open(str(sys.argv[1]), "r")
 data = file.readlines()
 data = map(int, [x.strip() for x in data]) 
 
-time_init = datetime.datetime.now()
 
 def insertion_sort(l):
     for i in xrange(1, len(l)):
@@ -25,7 +24,8 @@ def quickSort(arr):
     pivotList = []
     more = []
     if len(arr) <= 10:
-        return insertion_sort(arr)
+        insertion_sort(arr)
+        return arr
     else:
         pivot = arr[int(random.uniform(0, len(arr)))]
         for i in arr:
@@ -39,10 +39,16 @@ def quickSort(arr):
         more = quickSort(more)
     return less + pivotList + more
 
+time_init = datetime.datetime.now()
+result = quickSort(data)
 time_end = datetime.datetime.now()
 time_delta = time_end - time_init
-print time_delta.total_seconds()
 
 file.close()
 
-#quickSort(data) == sorted(data)
+if "-p" in sys.argv or "--print" in sys.argv:
+    for i in result:
+        print i
+
+if "-t" in sys.argv or "--time" in sys.argv:
+    print time_delta.total_seconds()
