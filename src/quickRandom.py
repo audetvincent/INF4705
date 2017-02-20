@@ -25,8 +25,12 @@ def quickSort(arr):
                 more.append(i)
             else:
                 pivotList.append(i)
-        less = quickSort(less)
-        more = quickSort(more)
+        if (less.size() < more.size()):
+			less = quickSort(less)
+			more = quickSort(more)
+		else:
+			more = quickSort(more)
+			less = quickSort(less)
     return less + pivotList + more
 
 time_init = datetime.datetime.now()
