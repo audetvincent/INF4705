@@ -35,7 +35,7 @@ def quickSort(arr):
                 more.append(i)
             else:
                 pivotList.append(i)
-        if (less.size() < more.size()):
+		if (less.size() < more.size()):
 			less = quickSort(less)
 			more = quickSort(more)
 		else:
