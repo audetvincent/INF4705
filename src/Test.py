@@ -39,9 +39,9 @@ for filename in os.listdir(means_path):
 			
 			#Test de constante
 			co_writer = csv.writer(co_out)
-			co_writer.writerow([y, f_opt])
+			co_writer.writerow([f_opt, y])
 			
 			cw_writer = csv.writer(cw_out)
-			cw_writer.writerow([y, f_worst])			
+			cw_writer.writerow([f_worst, y])			
 			
 			print(str(x) + " " + str(y_opt) + " " + str(y_worst))
