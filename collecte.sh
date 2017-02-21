@@ -17,11 +17,14 @@ for algo in {"counting","quick","quickSeuil"}; do
     for serie in {"serie1","serie2","serie3"}; do
         # Pour chaque exemplaire dans une série.
         for ex in $(ls $serie); do
-            # On receuille le temps d'exécution dans t.
-            t=$(timeout 180 ./tp.sh -a $algo -e ${serie}/${ex} -t)
             # On évalue la taille de l'exemplaire.
             n=$(cat ${serie}/${ex} | wc -l)
-            # Si jamais on mesure un temps, on l'insère dans le bon fichier.
+	    if [ "$n" -lt 100000 ] || [ "$serie" != "serie2" ] || [ "$algo" != "counting" ]; then
+	    	# On receuille le temps d'exécution dans t.
+            	echo ${ex}
+		t=$(timeout 180 ./tp.sh -a $algo -e ${serie}/${ex} -t)
+            fi
+	    # Si jamais on mesure un temps, on l'insère dans le bon fichier.
             if [ t != "" ]; then
                 echo $n,$t >> results/raw/${algo}_${serie}.csv
             fi

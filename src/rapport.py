@@ -84,7 +84,6 @@ for filename in os.listdir(raw_path):
             list_500000 = list_500000 / 100
             print ("after mean : " + str(list_500000))
 
-        # Must finish the writing in csv file
         of = open(means_path+filename, 'w+')
         csvToWrite = csv.writer(of)
         csvToWrite.writerow(["1000", list_1000])    
