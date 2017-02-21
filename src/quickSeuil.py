@@ -2,6 +2,9 @@
 
 import sys
 import datetime
+import sys
+sys.setrecursionlimit(5000000)
+
 
 # Ouverture du fichier de donnees
 file = open(str(sys.argv[1]), "r")
@@ -34,7 +37,7 @@ def quickSort(arr):
                 more.append(i)
             else:
                 pivotList.append(i)
-		if (less.size() < more.size()):
+		if (len(less) < len(more)):
 			less = quickSort(less)
 			more = quickSort(more)
 		else:
