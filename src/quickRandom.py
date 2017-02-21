@@ -4,8 +4,8 @@ import sys
 import random
 import datetime
 
+# Ouverture du fichier de donnees
 file = open(str(sys.argv[1]), "r")
-
 data = file.readlines()
 data = map(int, [x.strip() for x in data]) 
 
@@ -29,6 +29,7 @@ def quickSort(arr):
         more = quickSort(more)
     return less + pivotList + more
 
+# Execution du tri et mesure du temps
 time_init = datetime.datetime.now()
 result = quickSort(data)
 time_end = datetime.datetime.now()
@@ -36,6 +37,7 @@ time_delta = time_end - time_init
 
 file.close()
 
+# Verification des parametres fournis
 if "-p" in sys.argv or "--print" in sys.argv:
     for i in result:
         print i
