@@ -19,11 +19,15 @@ for i in range(nbVertices):
 for i in range(nbArcs):
     arc = file.readline().split()
     dag.add_edge(int(arc[0]), int(arc[1]))
+file.close()
+
+# Algorithme
+def countOrderings(currentDag, nbVertices):
+    #TODO
 
 # Denombrement des solutions
-nbOrderings = 0
 time_start = datetime.datetime.now()
-# TODO here
+nbOrderings = countOrderings(dag)
 time_end = datetime.datetime.now()
 
 # Verification des parametres fournis

@@ -19,6 +19,7 @@ for i in range(nbVertices):
 for i in range(nbArcs):
     arc = file.readline().split()
     dag.add_edge(int(arc[0]), int(arc[1]))
+file.close()
 
 # Denombrement des solutions
 nbOrderings = 0
