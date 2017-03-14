@@ -108,6 +108,13 @@ class DAG(object):
         dependent_nodes = set(node for dependents in graph.itervalues() for node in dependents)
 	return [node for node in graph.keys() if node not in dependent_nodes]
 
+    def nodes(self, graph=None):
+        """ Returns a list of all nodes in the graph """
+        if graph is None:
+            graph = self.graph
+
+        return graph.keys()
+
     def validate(self, graph=None):
         """ Returns (Boolean, message) of whether DAG is valid. """
         graph = graph if graph is not None else self.graph
