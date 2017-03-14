@@ -5,6 +5,7 @@
 import sys
 import datetime
 from DAG import DAG 
+import copy
 
 # Ouverture du fichier de donnees
 file = open(str(sys.argv[1]), "r")
@@ -22,12 +23,24 @@ for i in range(nbArcs):
 file.close()
 
 # Algorithme
-def countOrderings(currentDag, nbVertices):
-    #TODO
+global nbOrderings
+nbOrderings = 0
+def countOrderings(currentDag):
+    if currentDag.size() == 0:
+        global nbOrderings
+        print(nbOrderings)
+        nbOrderings += 1
+        return
+    
+    for v in currentDag.ind_nodes():
+        print("Took node ", v, "\n")
+        tempDag = copy.deepcopy(currentDag) 
+        tempDag.delete_node(v)
+        return countOrderings(tempDag)
 
 # Denombrement des solutions
 time_start = datetime.datetime.now()
-nbOrderings = countOrderings(dag)
+countOrderings(dag)
 time_end = datetime.datetime.now()
 
 # Verification des parametres fournis
