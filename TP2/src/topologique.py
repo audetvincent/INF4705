@@ -28,15 +28,13 @@ nbOrderings = 0
 def countOrderings(currentDag):
     if currentDag.size() == 0:
         global nbOrderings
-        print(nbOrderings)
         nbOrderings += 1
         return
     
     for v in currentDag.ind_nodes():
-        print("Took node ", v, "\n")
         tempDag = copy.deepcopy(currentDag) 
         tempDag.delete_node(v)
-        return countOrderings(tempDag)
+        countOrderings(tempDag)
 
 # Denombrement des solutions
 time_start = datetime.datetime.now()
