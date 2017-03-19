@@ -32,9 +32,12 @@ def countOrderings(currentDag):
         return
     
     for v in currentDag.ind_nodes():
-        tempDag = copy.deepcopy(currentDag) 
-        tempDag.delete_node(v)
-        countOrderings(tempDag)
+        children = currentDag.downstream(v)
+        currentDag.delete_node(v)
+        countOrderings(currentDag)
+        currentDag.add_node(v)
+        for c in children:
+            currentDag.add_edge(v, c)
 
 # Denombrement des solutions
 time_start = datetime.datetime.now()
