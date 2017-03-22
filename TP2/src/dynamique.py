@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-# Algorithme de programmation dynamique permettant de calculer le nombre d'extensions lineaires dans un graphe orienté sans cycle
+# Algorithme de programmation dynamique permettant de calculer le nombre d'extensions lineaires dans un graphe oriente sans cycle
 
 import sys
 import datetime
 from DAG import DAG
+from vorace import decomp
 
 # Ouverture du fichier de donnees
 file = open(str(sys.argv[1]), "r")
@@ -21,10 +22,26 @@ for i in range(nbArcs):
     dag.add_edge(int(arc[0]), int(arc[1]))
 file.close()
 
+def fermetureTransitive(dag):
+    for k in dag.nodes():
+        for i in dag.nodes():
+            for j in dag.nodes():
+                if j in dag.downstream(i):
+                    continue
+                elif k in dag.downstream(i) and j in dag.downstream(k):
+                    dag.add_edge(i, j)
+
+
+
 # Denombrement des solutions
 nbOrderings = 0
 time_start = datetime.datetime.now()
-# TODO here
+fermetureTransitive(dag)
+chains = decomp(dag)
+array = #x dimensions
+for i in range(1, len(chains) - 1):
+    for j in range(1, len(chains) - 1):
+        array[i][j] =
 time_end = datetime.datetime.now()
 
 # Verification des parametres fournis
