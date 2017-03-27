@@ -7,6 +7,7 @@ import datetime
 from DAG import DAG
 from vorace import decomp
 import numpy as np
+from itertools import product
 
 # Ouverture du fichier de donnees
 file = open(str(sys.argv[1]), "r")
@@ -34,16 +35,16 @@ def fermetureTransitive(dag):
 
 #def remplirTableau(array):
 
-
 # Denombrement des solutions
 nbOrderings = 0
 time_start = datetime.datetime.now()
-fermetureTransitive(dag)
 chains = decomp(dag)
-array = [1] * len(chains[0])
-for i in range(1, len(chains) - 1):
-    array = [array] * len(chains[i])
-print(len(chains))
+fermetureTransitive(dag)
+dims = []
+for i in range(len(chains)):
+    dims.append(len(chains[i]))
+array = np.ones(dims)
+#TODO
 time_end = datetime.datetime.now()
 
 # Verification des parametres fournis
