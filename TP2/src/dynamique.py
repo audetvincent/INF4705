@@ -43,8 +43,16 @@ fermetureTransitive(dag)
 dims = []
 for i in range(len(chains)):
     dims.append(len(chains[i]))
-array = np.ones(dims)
-#TODO
+array = np.zeros(dims)
+for index, item in np.ndenumerate(array):
+    if index.count(0) >= (len(chains) - 1):
+        array[index] = 1
+    else:
+        for i in range(len(index)):
+            temp = list(index)
+            temp[i] = 0 if temp[i] <= 0 else (temp[i] - 1)
+            array[index] += array[tuple(temp)]
+nbOrderings = int(array.flat[-1])
 time_end = datetime.datetime.now()
 
 # Verification des parametres fournis
