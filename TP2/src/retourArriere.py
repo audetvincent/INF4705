@@ -5,7 +5,6 @@
 import sys
 import datetime
 from DAG import DAG 
-import copy
 
 # Ouverture du fichier de donnees
 file = open(str(sys.argv[1]), "r")

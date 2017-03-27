@@ -88,22 +88,24 @@ fermetureTransitive(dag)
 dims = []
 # Construction du tableau de calcul
 for i in range(len(chains)):
-    dims.append(len(chains[i]))
+    dims.append(len(chains[i])+1)
 array = np.ones(dims)
 # Parcours et remplissage du tableau
 for index, item in np.ndenumerate(array):
     # Si ce n'est pas une valeur frontiere (deja egale a 1)
     if index.count(0) < (len(chains) - 1):
+        array[index] = 0
         for i in range(len(index)):
-            downstream = dag.downstream(chains[i][index[i]])
-            chainEnds = []
-            for j in range(len(index)):
-                if j != i:
-                    chainEnds.append(chains[j][index[j]])
-            if len(set(downstream).intersection(chainEnds)) == 0:
-                temp = list(index)
-                temp[i] = 0 if temp[i] <= 0 else (temp[i] - 1)
-                array[index] += array[tuple(temp)]
+            if index[i]>0:
+                downstream = dag.downstream(chains[i][index[i]-1])
+                chainEnds = []
+                for j in range(len(index)):
+                    if j != i and index[j]>0:
+                        chainEnds.append(chains[j][index[j]-1])
+                if len(set(downstream).intersection(chainEnds)) == 0:
+                    temp = list(index)
+                    temp[i] = 0 if temp[i] <= 0 else (temp[i] - 1)
+                    array[index] += array[tuple(temp)]
 print(array)
 nbOrderings = int(array.flat[-1])
 time_end = datetime.datetime.now()
