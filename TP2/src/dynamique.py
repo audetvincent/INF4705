@@ -83,7 +83,6 @@ def fermetureTransitive(dag):
 nbOrderings = 0
 time_start = datetime.datetime.now()
 chains = decomp(copy.deepcopy(dag))
-print(chains)
 fermetureTransitive(dag)
 dims = []
 # Construction du tableau de calcul
@@ -106,7 +105,6 @@ for index, item in np.ndenumerate(array):
                     temp = list(index)
                     temp[i] = 0 if temp[i] <= 0 else (temp[i] - 1)
                     array[index] += array[tuple(temp)]
-print(array)
 nbOrderings = int(array.flat[-1])
 time_end = datetime.datetime.now()
 
