@@ -94,18 +94,21 @@ for index, item in np.ndenumerate(array):
     # Si ce n'est pas une valeur frontiere (deja egale a 1)
     if index.count(0) < (len(chains) - 1):
         array[index] = 0
+        # on initialise a 0 puis on regarde les cases a additioner : celles dont un index differe de -1
         for i in range(len(index)):
-            if index[i]>0:
+            if index[i] > 0: # il faut qu'il y ait au moins un sommet de la chaine pour prendre la case en compte
+                # on verifie si le sommet enleve est relie a l'extremite d'une autre chaine
                 downstream = dag.downstream(chains[i][index[i]-1])
                 chainEnds = []
                 for j in range(len(index)):
                     if j != i and index[j]>0:
                         chainEnds.append(chains[j][index[j]-1])
                 if len(set(downstream).intersection(chainEnds)) == 0:
+                    # si il ne l'est pas, on peut additioner la case en question
                     temp = list(index)
                     temp[i] = 0 if temp[i] <= 0 else (temp[i] - 1)
                     array[index] += array[tuple(temp)]
-nbOrderings = int(array.flat[-1])
+nbOrderings = int(array.flat[-1]) # resultat : derniere case du tableau
 time_end = datetime.datetime.now()
 
 # Verification des parametres fournis
