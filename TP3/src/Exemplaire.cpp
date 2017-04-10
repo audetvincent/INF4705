@@ -1,7 +1,7 @@
-#include "Probleme.h"
+#include "Exemplaire.h"
 #include <iostream>
 
-Probleme::Probleme(int nbPoints) : nbPoints(nbPoints)
+Exemplaire::Exemplaire(int nbPoints) : nbPoints(nbPoints)
 {
   types = new int[nbPoints];
 
@@ -14,7 +14,7 @@ Probleme::Probleme(int nbPoints) : nbPoints(nbPoints)
   }
 }
 
-Probleme::Probleme(int nbPoints, int* types, int* maxSentiers, float** couts) : nbPoints(nbPoints)
+Exemplaire::Exemplaire(int nbPoints, int* types, int* maxSentiers, float** couts) : nbPoints(nbPoints)
 {
   this->types = new int[nbPoints];
   setTypes(types);
@@ -30,7 +30,7 @@ Probleme::Probleme(int nbPoints, int* types, int* maxSentiers, float** couts) : 
   setCouts(couts);
 }
 
-Probleme::~Probleme()
+Exemplaire::~Exemplaire()
 {
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -43,12 +43,12 @@ Probleme::~Probleme()
   delete [] maxSentiers;
 }
 
-void Probleme::setNbPoints(int nbPoints)
+void Exemplaire::setNbPoints(int nbPoints)
 {
   this->nbPoints = nbPoints;
 }
 
-void Probleme::setTypes(int* types)
+void Exemplaire::setTypes(int* types)
 {
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -56,7 +56,7 @@ void Probleme::setTypes(int* types)
   }
 }
 
-void Probleme::setMaxSentiers(int* maxSentiers)
+void Exemplaire::setMaxSentiers(int* maxSentiers)
 {
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -64,7 +64,7 @@ void Probleme::setMaxSentiers(int* maxSentiers)
   }
 }
 
-void Probleme::setCouts(float** couts)
+void Exemplaire::setCouts(float** couts)
 {
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -75,22 +75,22 @@ void Probleme::setCouts(float** couts)
   }
 }
 
-int Probleme::getNbPoints()
+int Exemplaire::getNbPoints()
 {
   return nbPoints;
 }
 
-int* Probleme::getTypes()
+int* Exemplaire::getTypes()
 {
   return types;
 }
 
-int* Probleme::getMaxSentiers()
+int* Exemplaire::getMaxSentiers()
 {
   return maxSentiers;
 }
 
-float** Probleme::getCouts()
+float** Exemplaire::getCouts()
 {
   return couts;
 }

@@ -1,14 +1,14 @@
 /*
- * Classe représentant une solution du problème
+ * Classe représentant un exemplaire du problème
  */
 
 
-class Probleme 
+class Exemplaire 
 {
 public:
-  Probleme(int nbPoints);
-  Probleme(int nbPoints, int* types, int* maxSentiers, float** couts);
-  ~Probleme();
+  Exemplaire(int nbPoints);
+  Exemplaire(int nbPoints, int* types, int* maxSentiers, float** couts);
+  ~Exemplaire();
   void setNbPoints(int nbPoints);
   void setTypes(int* types);
   void setMaxSentiers(int* maxSentiers);
