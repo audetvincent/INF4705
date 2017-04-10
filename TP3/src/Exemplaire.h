@@ -1,3 +1,6 @@
+#ifndef EXEMPLAIRE_H
+#define EXEMPLAIRE_H
+
 /*
  * Classe représentant un exemplaire du problème
  */
@@ -24,3 +27,5 @@ private:
   int* maxSentiers;
   float** couts;
 };
+
+#endif

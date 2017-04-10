@@ -1,3 +1,6 @@
+#ifndef SOLUTION_H
+#define SOLUTION_H
+
 /*
  * Classe représentant une solution du problème
  */
@@ -16,3 +19,5 @@ private:
   int* nbIncidents;
   float** sentiers;
 };
+
+#endif

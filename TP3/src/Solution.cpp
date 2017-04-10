@@ -1,8 +1,5 @@
 #include "Solution.h"
-
-#define PT_DE_VUE 1
-#define ENTREE 2
-#define ETAPE 3
+#include "utils.h"
 
 Solution::Solution(int nbPoints) : nbPoints(nbPoints)
 {
@@ -35,9 +32,6 @@ Solution::~Solution()
 
 bool Solution::verifier(Exemplaire& e)
 {
-  // 1. Pour chaque point d'interêt, il doit exister un chemin qui le relie à une entrée du parc
-  
-
   // 2. Chaque entrée du parc doit être le départ d'au moins un sentier
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -73,6 +67,31 @@ bool Solution::verifier(Exemplaire& e)
       return false;
     }
   }
+  
+  // 1. Pour chaque point d'interêt, il doit exister un chemin qui le relie à une entrée du parc
+  bool* visites = new bool[nbPoints];
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    visites[i] = false;
+  }
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    if (e.getTypes()[i] != ENTREE)
+    {
+      if (nbIncidents[i] < 1)
+      {
+        return false;
+      }
+      
+      bool relie = relieEntree(sentiers, i, nbPoints, visites);
+      if (!relie)
+      {
+        return relie;
+      }
+    }
+  }
+  delete [] visites;
+
 
   return true;
 }
