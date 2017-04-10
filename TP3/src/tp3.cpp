@@ -69,14 +69,18 @@ Exemplaire* lireFichier(std::string nom)
 
 int main(int argc, char* argv[])
 {
-  Exemplaire* p = lireFichier(argv[1]);
+  Exemplaire* e = lireFichier(argv[1]);
   
-  if (p == nullptr)
+  if (e == nullptr)
   {
     std::cout << "Erreur de création du probleme" << std::endl;
     return 0;
   }
-  
-  delete p;
+ 
+  Solution* s = new Solution(e->getNbPoints());
+
+  //s->setSentier()
+
+  delete e, s;
   return 0;
 }

@@ -12,6 +12,13 @@ class Solution
 public:
   Solution(int nbPoints);
   ~Solution();
+  void setNbPoints(int nbPoints);
+  void setNbIncidents(int* nbIncidents);
+  void setSentier(int depart, int arrivee, float cout);
+  void setSentiers(float** sentiers);
+  int getNbPoints();
+  int* getNbIncidents();
+  float** getSentiers(); 
   bool verifier(Exemplaire& e);
 
 private:

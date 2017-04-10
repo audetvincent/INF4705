@@ -30,6 +30,42 @@ Solution::~Solution()
   delete [] nbIncidents;
 }
 
+void Solution::setNbPoints(int nbPoints)
+{
+  this->nbPoints = nbPoints;
+}
+
+void Solution::setNbIncidents(int* nbIncidents)
+{
+  this->nbIncidents = nbIncidents;
+}
+
+void Solution::setSentier(int depart, int arrivee, float cout)
+{
+  sentiers[depart][arrivee] = cout;
+  sentiers[arrivee][depart] = cout;
+}
+
+void Solution::setSentiers(float** sentiers)
+{
+  this->sentiers = sentiers;
+}
+
+int Solution::getNbPoints()
+{
+  return nbPoints;
+}
+
+int* Solution::getNbIncidents()
+{
+  return nbIncidents;
+}
+              
+float** Solution::getSentiers()
+{
+  return sentiers;
+}
+
 bool Solution::verifier(Exemplaire& e)
 {
   // 2. Chaque entrée du parc doit être le départ d'au moins un sentier
