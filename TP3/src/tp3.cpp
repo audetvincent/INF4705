@@ -91,6 +91,12 @@ int main(int argc, char* argv[])
   s->setSentier(5, 6, 1);
   bool good = s->verifier(*e);
   s->afficher();
+  
+  std::cout << s->getCoutTotal() << std::endl;
+
+  int cout = s->calculer();
+
+  std::cout << cout << std::endl;
 
   delete e, s;
   return 0;

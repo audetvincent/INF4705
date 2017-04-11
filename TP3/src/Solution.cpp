@@ -19,6 +19,8 @@ Solution::Solution(int nbPoints) : nbPoints(nbPoints)
     }
     nbIncidents[i] = 0;
   }
+
+  coutTotal = 0;
 }
 
 Solution::~Solution()
@@ -47,6 +49,19 @@ void Solution::setSentier(int depart, int arrivee, float cout)
   nbIncidents[depart]++;
   sentiers[arrivee][depart] = cout;
   nbIncidents[arrivee]++;
+  
+  coutTotal += cout;
+}
+
+void Solution::deleteSentier(int depart, int arrivee)
+{
+  int cout = sentiers[depart][arrivee];
+  sentiers[depart][arrivee] = 0;
+  nbIncidents[depart]--;
+  sentiers[arrivee][depart] = 0;
+  nbIncidents[arrivee]--;
+  
+  coutTotal -= cout;
 }
 
 void Solution::setSentiers(float** sentiers)
@@ -67,6 +82,11 @@ int* Solution::getNbIncidents()
 float** Solution::getSentiers()
 {
   return sentiers;
+}
+
+int Solution::getCoutTotal()
+{
+  return coutTotal;
 }
 
 bool Solution::verifier(Exemplaire& e)
@@ -147,4 +167,18 @@ void Solution::afficher()
   }
 
   std::cout << "fin" << std::endl;
+}
+
+int Solution::calculer()
+{
+  coutTotal = 0;
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    for (int j = 0; j < i; ++j)
+    {
+      coutTotal += sentiers[i][j];
+    }
+  }
+
+  return coutTotal;
 }
