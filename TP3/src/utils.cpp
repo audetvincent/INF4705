@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <iostream>
 
 bool relieEntree(float** sentiers, int point, int nbPoints, bool* visites)
 {

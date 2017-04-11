@@ -1,5 +1,6 @@
 #include "Solution.h"
 #include "utils.h"
+#include <iostream>
 
 Solution::Solution(int nbPoints) : nbPoints(nbPoints)
 {
@@ -43,7 +44,9 @@ void Solution::setNbIncidents(int* nbIncidents)
 void Solution::setSentier(int depart, int arrivee, float cout)
 {
   sentiers[depart][arrivee] = cout;
+  nbIncidents[depart]++;
   sentiers[arrivee][depart] = cout;
+  nbIncidents[arrivee]++;
 }
 
 void Solution::setSentiers(float** sentiers)
@@ -108,17 +111,16 @@ bool Solution::verifier(Exemplaire& e)
   bool* visites = new bool[nbPoints];
   for (int i = 0; i < nbPoints; ++i)
   {
-    visites[i] = false;
-  }
-  for (int i = 0; i < nbPoints; ++i)
-  {
     if (e.getTypes()[i] != ENTREE)
     {
       if (nbIncidents[i] < 1)
       {
         return false;
       }
-      
+      for (int i = 0; i < nbPoints; ++i)
+      {
+        visites[i] = false;
+      }
       bool relie = relieEntree(sentiers, i, nbPoints, visites);
       if (!relie)
       {
