@@ -1,5 +1,6 @@
 #include "solveur.h"
 #include "utils.h"
+#include <iostream>
 
 Solution* trouverPremiereSolution(Exemplaire& e)
 {
@@ -15,7 +16,7 @@ Solution* trouverPremiereSolution(Exemplaire& e)
   {
     if (types[i] == PT_DE_VUE)
     {
-      int min = couts[i][0];
+      int min = 0;
       for (int j = 1; j < nbPoints; ++j)
       {
         if (couts[i][j] < couts[i][min] && types[j] != PT_DE_VUE)
@@ -27,13 +28,13 @@ Solution* trouverPremiereSolution(Exemplaire& e)
       s->setSentier(i, min, couts[i][min]);
     }
   }
-
+  
   // Assignation vorace des entrees en fonction des assignations precedentes
   for (int i = 0; i < nbPoints; ++i)
   {
     if (types[i] == ENTREE)
     {
-      int min = couts[i][0];
+      int min = 0;
       for (int j = 1; j < nbPoints; ++j)
       {
         if (couts[i][j] < couts[i][min] && types[j] != PT_DE_VUE)
@@ -54,8 +55,8 @@ Solution* trouverPremiereSolution(Exemplaire& e)
   {
     if (types[i] == ETAPE)
     {
-      int min = couts[i][0] < couts[i][1] ? couts[i][0] : couts[i][1];
-      int min_deux = min == couts[i][0] ? couts[i][1] : couts[i][0];
+      int min = couts[i][0] < couts[i][1] ? 0 : 1;
+      int min_deux = min == 0 ? 1 : 0;
       for (int j = 1; j < nbPoints; ++j)
       {
         if (couts[i][j] < couts[i][min_deux] && types[j] != PT_DE_VUE)

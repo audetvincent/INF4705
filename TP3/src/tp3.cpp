@@ -41,7 +41,8 @@ int main(int argc, char* argv[])
   Solution* s = trouverPremiereSolution(*e);
   
   bool good = s->verifier(*e);
-  
+  std::cout << std::boolalpha << good << std::endl;  
+
   s->afficher();
   
   std::cout << s->getCoutTotal() << std::endl;
