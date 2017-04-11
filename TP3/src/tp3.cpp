@@ -38,18 +38,8 @@ int main(int argc, char* argv[])
     return 0;
   }
  
-  Solution* s = new Solution(e->getNbPoints());
-
-  s->setSentier(0, 1, 1);
-  s->setSentier(0, 6, 1);
-  s->setSentier(1, 2, 1);
-  s->setSentier(1, 4, 1);
-  s->setSentier(2, 3, 1);
-  s->setSentier(3, 7, 1);
-  s->setSentier(4, 8, 1);
-  s->setSentier(4, 5, 1);
-  s->setSentier(5, 9, 1);
-  s->setSentier(5, 6, 1);
+  Solution* s = trouverPremiereSolution(*e);
+  
   bool good = s->verifier(*e);
   
   s->afficher();
@@ -59,8 +49,6 @@ int main(int argc, char* argv[])
   int cout = s->calculer();
 
   std::cout << cout << std::endl;
-
-
 
   delete e, s;
   return 0;

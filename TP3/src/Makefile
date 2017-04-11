@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-I.
-DEPS = Solution.h Exemplaire.h utils.h
-OBJ = tp3.o Solution.o Exemplaire.o utils.o
+DEPS = Solution.h Exemplaire.h utils.h solveur.h
+OBJ = tp3.o Solution.o Exemplaire.o utils.o solveur.o
 
 %.o: %.c $(DEPS)
 		$(CC) -c -o $@ $< $(CFLAGS)
