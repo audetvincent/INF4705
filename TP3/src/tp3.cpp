@@ -4,12 +4,12 @@
  */
 
 #include "Solution.h"
-#include "Probleme.h"
+#include "Exemplaire.h"
 #include <string>
 #include <iostream>
 #include <fstream>
 
-Probleme* lireFichier(std::string nom)
+Exemplaire* lireFichier(std::string nom)
 {
   std::ifstream fichier(nom, std::ios::in);
 
@@ -47,7 +47,7 @@ Probleme* lireFichier(std::string nom)
       }
     }
 
-    Probleme* p = new Probleme(nbPoints, types, maxSentiers, couts);
+    Exemplaire* p = new Exemplaire(nbPoints, types, maxSentiers, couts);
    
     for (int i = 0; i < nbPoints; ++i)
     {
@@ -69,14 +69,18 @@ Probleme* lireFichier(std::string nom)
 
 int main(int argc, char* argv[])
 {
-  Probleme* p = lireFichier("../TP3_Data/Parc2-10Zones.txt");
+  Exemplaire* e = lireFichier(argv[1]);
   
-  if (p == nullptr)
+  if (e == nullptr)
   {
     std::cout << "Erreur de création du probleme" << std::endl;
     return 0;
   }
-  
-  delete p;
+ 
+  Solution* s = new Solution(e->getNbPoints());
+
+  //s->setSentier()
+
+  delete e, s;
   return 0;
 }
