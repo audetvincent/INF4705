@@ -5,70 +5,31 @@
 
 #include "Solution.h"
 #include "Exemplaire.h"
-#include <string>
 #include <iostream>
-#include <fstream>
-
-Exemplaire* lireFichier(std::string nom)
-{
-  std::ifstream fichier(nom, std::ios::in);
-
-  if(fichier)
-  {
-    int nbPoints;
-    int* types;
-    int* maxSentiers;
-    float** couts;
-
-    fichier >> nbPoints;
-    
-    types = new int[nbPoints]; 
-    for (int i = 0; i < nbPoints; ++i)
-    {
-      fichier >> types[i];
-    }
-
-    maxSentiers = new int[nbPoints];
-    for (int i = 0; i < nbPoints; ++i)
-    {
-      fichier >> maxSentiers[i];
-    }
-    
-    couts = new float*[nbPoints];
-    for (int i = 0; i < nbPoints; ++i)
-    {
-      couts[i] = new float[nbPoints];
-    }
-    for (int i = 0; i < nbPoints; ++i)
-    {
-      for (int j = 0; j < nbPoints; ++j)
-      {
-        fichier >> couts[i][j];
-      }
-    }
-
-    Exemplaire* p = new Exemplaire(nbPoints, types, maxSentiers, couts);
-   
-    for (int i = 0; i < nbPoints; ++i)
-    {
-      delete [] couts[i];
-    }
-    delete [] couts;
-    delete [] maxSentiers;
-    delete [] types;
-    fichier.close();
-
-    return p;
-  }
-  else
-  {
-    std::cout << "Erreur lors de l'ouverture du fichier " << nom << std::endl;
-    return nullptr;
-  }
-}
+#include "utils.h"
+#include "solveur.h"
 
 int main(int argc, char* argv[])
 {
+  bool afficher = false;
+  bool temps = false;
+  if (argc == 4)
+  {
+    afficher = true;
+    temps = true;
+  }
+  else if (argc == 3)
+  {
+    if (argv[2] == "-p")
+    {
+      afficher = true;
+    }
+    else if (argv[2] == "-t")
+    {
+      temps = true;
+    }
+  }
+
   Exemplaire* e = lireFichier(argv[1]);
   
   if (e == nullptr)
@@ -90,6 +51,7 @@ int main(int argc, char* argv[])
   s->setSentier(5, 9, 1);
   s->setSentier(5, 6, 1);
   bool good = s->verifier(*e);
+  
   s->afficher();
   
   std::cout << s->getCoutTotal() << std::endl;
@@ -97,6 +59,8 @@ int main(int argc, char* argv[])
   int cout = s->calculer();
 
   std::cout << cout << std::endl;
+
+
 
   delete e, s;
   return 0;
