@@ -20,6 +20,7 @@ public:
   int* getNbIncidents();
   float** getSentiers(); 
   bool verifier(Exemplaire& e);
+  void afficher();
 
 private:
   int nbPoints;

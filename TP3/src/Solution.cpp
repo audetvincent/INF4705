@@ -130,7 +130,21 @@ bool Solution::verifier(Exemplaire& e)
   }
   delete [] visites;
 
-
   return true;
 }
 
+void Solution::afficher()
+{
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    for (int j = 0; j < i; ++j)
+    {
+      if (sentiers[i][j] != 0)
+      {
+        std::cout << i << " " << j << std::endl;
+      }
+    }
+  }
+
+  std::cout << "fin" << std::endl;
+}

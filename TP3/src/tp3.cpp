@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
  
   Solution* s = new Solution(e->getNbPoints());
 
-  /*s->setSentier(0, 1, 1);
+  s->setSentier(0, 1, 1);
   s->setSentier(0, 6, 1);
   s->setSentier(1, 2, 1);
   s->setSentier(1, 4, 1);
@@ -89,9 +89,8 @@ int main(int argc, char* argv[])
   s->setSentier(4, 5, 1);
   s->setSentier(5, 9, 1);
   s->setSentier(5, 6, 1);
-  s->setSentier(2, 4, 1);
   bool good = s->verifier(*e);
-  std::cout << std::boolalpha << good << std::endl;*/
+  s->afficher();
 
   delete e, s;
   return 0;
