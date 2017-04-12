@@ -64,8 +64,24 @@ Solution* trouverPremiereSolution(Exemplaire& e)
       visites[i] = true;
       while (nbIncidents[i] < 2)
       {
-        int min = i != 0 ? (couts[i][0] < couts[i][1] ? 0 : 1) : (couts[i][1] < couts[i][2] ? 1 : 2);
-        int min_deux = i != 0 ? (min == 0 ? 1 : 0) : (min == 1 ? 2 : 1);
+        int min;
+        int min_deux;
+        if (i == 0)
+        {
+          min = couts[i][1] < couts[i][2] ? 1 : 2;
+          min_deux = min == 1 ? 2 : 1;
+        }
+        else if (i == 1)
+        {
+          min = couts[i][0] < couts[i][2] ? 0 : 2;
+          min_deux = min == 0 ? 3 : 0;
+        }
+        else
+        {
+          min = couts[i][0] < couts[i][1] ? 0 : 1;
+          min_deux = min == 0 ? 1 : 0;
+        }
+
         for (int j = 0; j < nbPoints; ++j)
         {
           if (visites[j] == false)
