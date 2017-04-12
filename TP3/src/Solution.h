@@ -20,16 +20,16 @@ public:
   int getNbPoints();
   int* getNbIncidents();
   float** getSentiers(); 
-  int getCoutTotal();
+  float getCoutTotal();
   bool verifier(Exemplaire& e);
   void afficher();
-  int calculer();
+  float calculer();
 
 private:
   int nbPoints;
   int* nbIncidents;
   float** sentiers;
-  int coutTotal;
+  float coutTotal;
 };
 
 #endif

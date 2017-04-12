@@ -55,7 +55,7 @@ void Solution::setSentier(int depart, int arrivee, float cout)
 
 void Solution::deleteSentier(int depart, int arrivee)
 {
-  int cout = sentiers[depart][arrivee];
+  float cout = sentiers[depart][arrivee];
   sentiers[depart][arrivee] = 0;
   nbIncidents[depart]--;
   sentiers[arrivee][depart] = 0;
@@ -84,7 +84,7 @@ float** Solution::getSentiers()
   return sentiers;
 }
 
-int Solution::getCoutTotal()
+float Solution::getCoutTotal()
 {
   return coutTotal;
 }
@@ -169,7 +169,7 @@ void Solution::afficher()
   std::cout << "fin" << std::endl;
 }
 
-int Solution::calculer()
+float Solution::calculer()
 {
   coutTotal = 0;
   for (int i = 0; i < nbPoints; ++i)

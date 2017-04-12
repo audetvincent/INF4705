@@ -44,10 +44,11 @@ int main(int argc, char* argv[])
   std::cout << std::boolalpha << good << std::endl;  
 
   s->afficher();
-  
-  std::cout << s->getCoutTotal() << std::endl;
+ 
+  float cout = s->getCoutTotal(); 
+  std::cout << cout << std::endl;
 
-  int cout = s->calculer();
+  cout = s->calculer();
 
   std::cout << cout << std::endl;
 
