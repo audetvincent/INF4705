@@ -1,6 +1,8 @@
 #include "solveur.h"
 #include "utils.h"
 #include <iostream>
+#include <stdio.h>
+#include <deque>
 
 Solution* trouverPremiereSolution(Exemplaire& e)
 {
@@ -22,14 +24,14 @@ Solution* trouverPremiereSolution(Exemplaire& e)
       {
         if (i != j && couts[i][j] < couts[i][min] && types[j] != PT_DE_VUE && sentiers[i][j] == 0)
         {
-          min = j; 
+          min = j;
         }
       }
 
       s->setSentier(i, min, couts[i][min]);
     }
   }
-  
+
   // Assignation vorace des entrees en fonction des assignations precedentes
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -40,17 +42,17 @@ Solution* trouverPremiereSolution(Exemplaire& e)
       {
         if (i != j && couts[i][j] < couts[i][min] && types[j] != PT_DE_VUE && sentiers[i][j] == 0)
         {
-          min = j; 
+          min = j;
         }
       }
 
-      if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min] < maxSentiers[min]) 
+      if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min] < maxSentiers[min])
       {
         s->setSentier(i, min, couts[i][min]);
       }
     }
   }
-  
+
   // Assignation vorace des etapes en fonction des assignations precedentes
   bool* visites = new bool[nbPoints];
   for (int i = 0; i < nbPoints; ++i)
@@ -87,7 +89,7 @@ Solution* trouverPremiereSolution(Exemplaire& e)
           if (visites[j] == false)
           {
             if (i != j && couts[i][j] < couts[i][min_deux] && types[j] != PT_DE_VUE && sentiers[i][j] == 0)
-            {  
+            {
               if (couts[i][j] < couts[i][min])
               {
                 min_deux = min;
@@ -100,14 +102,14 @@ Solution* trouverPremiereSolution(Exemplaire& e)
             }
           }
         }
-    
+
         visites[min] = true;
         visites[min_deux] = true;
-        if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min] < maxSentiers[min]) 
+        if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min] < maxSentiers[min])
         {
           s->setSentier(i, min, couts[i][min]);
         }
-        if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min_deux] < maxSentiers[min_deux]) 
+        if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min_deux] < maxSentiers[min_deux])
         {
           s->setSentier(i, min_deux, couts[i][min_deux]);
         }
@@ -116,4 +118,140 @@ Solution* trouverPremiereSolution(Exemplaire& e)
   }
 
   return s;
+}
+
+// From  : http://www.geeksforgeeks.org/greedy-algorithms-set-5-prims-minimum-spanning-tree-mst-2/
+// A utility function to find the vertex with minimum key value, from
+// the set of vertices not yet included in MST
+int minKey(std::vector<float> key, std::vector<bool> mstSet, int nbPoints)
+{
+   // Initialize min value
+   float min = LONG_MAX;
+   int min_index;
+
+   for (int v = 0; v < nbPoints; v++)
+     if (mstSet[v] == false && key[v] < min)
+         min = key[v], min_index = v;
+
+   return min_index;
+}
+
+// A utility function to print the constructed MST stored in parent[]
+int printMST(std::vector<int> parent, int n, float** graph, int nbPoints)
+{
+   printf("Edge   Weight\n");
+   for (int i = 1; i < nbPoints; i++)
+      printf("%d - %d    %d \n", parent[i], i, graph[i][parent[i]]);
+}
+
+// Function to construct and print MST for a graph represented using adjacency
+// matrix representation
+std::vector<int> primMST(float** graph, int nbPoints)
+{
+     std::vector<int> parent(nbPoints, 0); // Array to store constructed MST
+     std::vector<float> key(nbPoints, LONG_MAX);   // Key values used to pick minimum weight edge in cut
+     std::vector<bool> mstSet(nbPoints, false);  // To represent set of vertices not yet included in MST
+
+     // Always include first 1st vertex in MST.
+     key[0] = 0;     // Make key 0 so that this vertex is picked as first vertex
+     parent[0] = -1; // First node is always root of MST
+
+     // The MST will have V vertices
+     for (int count = 0; count < nbPoints-1; count++)
+     {
+        // Pick the minimum key vertex from the set of vertices
+        // not yet included in MST
+        int u = minKey(key, mstSet, nbPoints);
+
+        // Add the picked vertex to the MST Set
+        mstSet[u] = true;
+
+        // Update key value and parent index of the adjacent vertices of
+        // the picked vertex. Consider only those vertices which are not yet
+        // included in MST
+        for (int v = 0; v < nbPoints; v++)
+
+           // graph[u][v] is non zero only for adjacent vertices of m
+           // mstSet[v] is false for vertices not yet included in MST
+           // Update the key only if graph[u][v] is smaller than key[v]
+          if (graph[u][v] && mstSet[v] == false && graph[u][v] <  key[v])
+             parent[v]  = u, key[v] = graph[u][v];
+     }
+
+	 return parent;
+     // print the constructed MST
+     //printMST(parent, nbPoints, graph, nbPoints);
+}
+
+void amelioration(Solution &s, Exemplaire &e)
+{
+	int nbPoints = e.getNbPoints();
+	float** sentiers = s.getSentiers();
+	std::pair<Erreur, int> valide = s.verifier(e);
+	std::deque<std::pair<int, float>> arcs;
+	int min = 0, max = 0;
+	float** couts = e.getCouts();
+
+	if (valide.first == OK)
+	{
+		s.afficher();
+	}
+
+	while(1)
+	{
+		//std::cout << valide.first << std::endl;
+		switch(valide.first)
+		{
+			// TODO : CONTRAINTES
+			case PT_DE_VUE:
+				for (int i = 0; i < nbPoints; ++i)
+				{
+					float cout = sentiers[valide.second][i];
+					if (cout > 0)
+					{
+						if (arcs.empty())
+							arcs.push_back(std::pair<int, float>(i, cout));
+						else if (cout < arcs[0].second)
+						{
+							arcs.push_front(std::pair<int, float>(i, cout));
+							s.deleteSentier(valide.second, arcs.back().first);
+							arcs.pop_back();
+						}
+						else
+							s.deleteSentier(valide.second, arcs.back().first);
+					}
+				}
+				arcs.clear();
+				break;
+			case LIEN:
+				min = sentierMin(valide.first, s, e);
+				s.setSentier(valide.first, min, couts[valide.first][min]);
+
+				//std::cout << valide.first << "-" << min << std::endl;
+				break;
+			case ETAPE:
+				min = sentierMin(valide.first, s, e);
+				s.setSentier(valide.first, min, couts[valide.first][min]);
+				break;
+			case ENTREE:
+				min = sentierMin(valide.first, s, e);
+				s.setSentier(valide.first, min, couts[valide.first][min]);
+				break;
+			case MAXI:
+				max = sentierMax(sentiers[valide.first], nbPoints);
+				s.deleteSentier(valide.first, max);
+				break;
+			default:
+				break;
+		}
+
+		//s.afficher();
+
+		valide = s.verifier(e);
+		if (valide.first == OK)
+		{
+			s.afficher();
+			exit(0);
+		}
+	}
 }

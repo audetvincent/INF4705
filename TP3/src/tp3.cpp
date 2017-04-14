@@ -38,19 +38,14 @@ int main(int argc, char* argv[])
     return 0;
   }
  
-  Solution* s = trouverPremiereSolution(*e);
-  
-  bool good = s->verifier(*e);
-  std::cout << std::boolalpha << good << std::endl;  
+  std::vector<int> parent = primMST(e->getCouts(), e->getNbPoints());
 
-  s->afficher();
- 
-  float cout = s->getCoutTotal(); 
-  std::cout << cout << std::endl;
+  Solution* s = new Solution(e->getNbPoints());
 
-  cout = s->calculer();
-
-  std::cout << cout << std::endl;
+  for (int i = 1; i < e->getNbPoints(); i++)
+    s->setSentier(parent[i], i, e->getCouts()[i][parent[i]]);
+	
+	amelioration(*s, *e);
 
   delete e, s;
   return 0;

@@ -1,6 +1,6 @@
 #include "Solution.h"
-#include "utils.h"
 #include <iostream>
+#include "utils.h"
 
 Solution::Solution(int nbPoints) : nbPoints(nbPoints)
 {
@@ -89,41 +89,14 @@ float Solution::getCoutTotal()
   return coutTotal;
 }
 
-bool Solution::verifier(Exemplaire& e)
+std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
 {
-  // 2. Chaque entrée du parc doit être le départ d'au moins un sentier
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    if (e.getTypes()[i] == ENTREE && nbIncidents[i] < 1)
-    {
-      return false;
-    }
-  }
-
-  // 3. Les points étape doivent avoir au moins 2 sentiers incidents
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    if (e.getTypes()[i] == ETAPE && nbIncidents[i] < 2)
-    {
-      return false;
-    }
-  }
-
   // 4. Les points de vue ne sont accessibles que par un seul sentier
   for (int i = 0; i < nbPoints; ++i)
   {
     if (e.getTypes()[i] == PT_DE_VUE && nbIncidents[i] > 1)
     {
-      return false;
-    }
-  }
-
-  // 5. Chaque point d'interêt possède un nombre limité de sentiers incidents
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    if (nbIncidents[i] > e.getMaxSentiers()[i])
-    {
-      return false;
+      return std::pair<Erreur, int>(PT_DE_VUE, i);
     }
   }
   
@@ -135,7 +108,7 @@ bool Solution::verifier(Exemplaire& e)
     {
       if (nbIncidents[i] < 1)
       {
-        return false;
+        return std::pair<Erreur, int>(LIEN, i);
       }
       for (int i = 0; i < nbPoints; ++i)
       {
@@ -144,13 +117,40 @@ bool Solution::verifier(Exemplaire& e)
       bool relie = relieEntree(sentiers, i, nbPoints, visites);
       if (!relie)
       {
-        return relie;
+        return std::pair<Erreur, int>(LIEN, i);
       }
     }
   }
   delete [] visites;
 
-  return true;
+  // 2. Chaque entrée du parc doit être le départ d'au moins un sentier
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    if (e.getTypes()[i] == ENTREE && nbIncidents[i] < 1)
+    {
+      return std::pair<Erreur, int>(ENTREE, i);
+    }
+  }
+
+  // 3. Les points étape doivent avoir au moins 2 sentiers incidents
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    if (e.getTypes()[i] == ETAPE && nbIncidents[i] < 2)
+    {
+      return std::pair<Erreur, int>(ETAPE, i);
+    }
+  }
+
+  // 5. Chaque point d'interêt possède un nombre limité de sentiers incidents
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    if (nbIncidents[i] > e.getMaxSentiers()[i])
+    {
+      return std::pair<Erreur, int>(MAXI, i);
+    }
+  }
+
+  return std::pair<Erreur, int>(OK, 0);
 }
 
 void Solution::afficher()

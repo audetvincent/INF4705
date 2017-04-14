@@ -6,6 +6,9 @@
  */
 
 #include "Exemplaire.h"
+#include <utility>
+
+enum Erreur{OK, PT_DE_VUE, ENTREE, ETAPE, MAXI, LIEN};
 
 class Solution 
 {
@@ -21,7 +24,7 @@ public:
   int* getNbIncidents();
   float** getSentiers(); 
   float getCoutTotal();
-  bool verifier(Exemplaire& e);
+  std::pair<Erreur, int> verifier(Exemplaire& e);
   void afficher();
   float calculer();
 
