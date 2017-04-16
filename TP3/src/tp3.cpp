@@ -31,22 +31,23 @@ int main(int argc, char* argv[])
   }
 
   Exemplaire* e = lireFichier(argv[1]);
-  
+
   if (e == nullptr)
   {
     std::cout << "Erreur de création du probleme" << std::endl;
     return 0;
   }
- 
+
   std::vector<int> parent = primMST(e->getCouts(), e->getNbPoints());
 
   Solution* s = new Solution(e->getNbPoints());
 
   for (int i = 1; i < e->getNbPoints(); i++)
     s->setSentier(parent[i], i, e->getCouts()[i][parent[i]]);
-	
+
 	amelioration(*s, *e);
 
   delete e, s;
+
   return 0;
 }

@@ -9,7 +9,7 @@ Solution* trouverPremiereSolution(Exemplaire& e);
 
 int minKey(std::vector<int> key, std::vector<bool> mstSet, int nbPoints);
 
-int printMST(std::vector<int> parent, int n, float** graph, int nbPoints);
+void printMST(std::vector<int> parent, int n, float** graph, int nbPoints);
 
 std::vector<int> primMST(float** graph, int nbPoints);
 

@@ -21,6 +21,7 @@ Solution::Solution(int nbPoints) : nbPoints(nbPoints)
   }
 
   coutTotal = 0;
+  prec = std::pair<int, int>(0, 0);
 }
 
 Solution::~Solution()
@@ -49,7 +50,7 @@ void Solution::setSentier(int depart, int arrivee, float cout)
   nbIncidents[depart]++;
   sentiers[arrivee][depart] = cout;
   nbIncidents[arrivee]++;
-  
+
   coutTotal += cout;
 }
 
@@ -60,8 +61,13 @@ void Solution::deleteSentier(int depart, int arrivee)
   nbIncidents[depart]--;
   sentiers[arrivee][depart] = 0;
   nbIncidents[arrivee]--;
-  
+
   coutTotal -= cout;
+}
+
+void Solution::setPrec(int depart, int arrivee)
+{
+    prec = std::pair<int, int>(depart, arrivee);
 }
 
 void Solution::setSentiers(float** sentiers)
@@ -78,7 +84,7 @@ int* Solution::getNbIncidents()
 {
   return nbIncidents;
 }
-              
+
 float** Solution::getSentiers()
 {
   return sentiers;
@@ -87,6 +93,11 @@ float** Solution::getSentiers()
 float Solution::getCoutTotal()
 {
   return coutTotal;
+}
+
+std::pair<int, int> Solution::getPrec()
+{
+    return prec;
 }
 
 std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
@@ -99,36 +110,13 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
       return std::pair<Erreur, int>(PT_DE_VUE, i);
     }
   }
-  
-  // 1. Pour chaque point d'interêt, il doit exister un chemin qui le relie à une entrée du parc
-  bool* visites = new bool[nbPoints];
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    if (e.getTypes()[i] != ENTREE)
-    {
-      if (nbIncidents[i] < 1)
-      {
-        return std::pair<Erreur, int>(LIEN, i);
-      }
-      for (int i = 0; i < nbPoints; ++i)
-      {
-        visites[i] = false;
-      }
-      bool relie = relieEntree(sentiers, i, nbPoints, visites);
-      if (!relie)
-      {
-        return std::pair<Erreur, int>(LIEN, i);
-      }
-    }
-  }
-  delete [] visites;
 
-  // 2. Chaque entrée du parc doit être le départ d'au moins un sentier
+  // 5. Chaque point d'interêt possède un nombre limité de sentiers incidents
   for (int i = 0; i < nbPoints; ++i)
   {
-    if (e.getTypes()[i] == ENTREE && nbIncidents[i] < 1)
+    if (nbIncidents[i] > e.getMaxSentiers()[i])
     {
-      return std::pair<Erreur, int>(ENTREE, i);
+      return std::pair<Erreur, int>(MAXI, i);
     }
   }
 
@@ -141,14 +129,37 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
     }
   }
 
-  // 5. Chaque point d'interêt possède un nombre limité de sentiers incidents
+  // 2. Chaque entrée du parc doit être le départ d'au moins un sentier
   for (int i = 0; i < nbPoints; ++i)
   {
-    if (nbIncidents[i] > e.getMaxSentiers()[i])
+    if (e.getTypes()[i] == ENTREE && nbIncidents[i] < 1)
     {
-      return std::pair<Erreur, int>(MAXI, i);
+      return std::pair<Erreur, int>(ENTREE, i);
     }
   }
+
+    // 1. Pour chaque point d'interêt, il doit exister un chemin qui le relie à une entrée du parc
+  bool* visites = new bool[nbPoints];
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    if (e.getTypes()[i] != ENTREE)
+    {
+      if (nbIncidents[i] < 1)
+      {
+        return std::pair<Erreur, int>(LIEN, i);
+      }
+      for (int j = 0; j < nbPoints; ++j)
+      {
+        visites[j] = false;
+      }
+      bool relie = relieEntree(sentiers, i, e.getTypes(), nbPoints, visites);
+      if (!relie)
+      {
+        return std::pair<Erreur, int>(LIEN, i);
+      }
+    }
+  }
+  delete [] visites;
 
   return std::pair<Erreur, int>(OK, 0);
 }

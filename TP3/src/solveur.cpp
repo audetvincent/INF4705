@@ -137,7 +137,7 @@ int minKey(std::vector<float> key, std::vector<bool> mstSet, int nbPoints)
 }
 
 // A utility function to print the constructed MST stored in parent[]
-int printMST(std::vector<int> parent, int n, float** graph, int nbPoints)
+void printMST(std::vector<int> parent, int n, float** graph, int nbPoints)
 {
    printf("Edge   Weight\n");
    for (int i = 1; i < nbPoints; i++)
@@ -189,7 +189,7 @@ void amelioration(Solution &s, Exemplaire &e)
 	float** sentiers = s.getSentiers();
 	std::pair<Erreur, int> valide = s.verifier(e);
 	std::deque<std::pair<int, float>> arcs;
-	int min = 0, max = 0;
+	int mini = 0, maxi = 0;
 	float** couts = e.getCouts();
 
 	if (valide.first == OK)
@@ -199,7 +199,8 @@ void amelioration(Solution &s, Exemplaire &e)
 
 	while(1)
 	{
-		//std::cout << valide.first << std::endl;
+		std::cout << valide.first << std::endl;
+        s.afficher();
 		switch(valide.first)
 		{
 			// TODO : CONTRAINTES
@@ -218,28 +219,29 @@ void amelioration(Solution &s, Exemplaire &e)
 							arcs.pop_back();
 						}
 						else
-							s.deleteSentier(valide.second, arcs.back().first);
+							s.deleteSentier(valide.second, i);
 					}
 				}
 				arcs.clear();
 				break;
 			case LIEN:
-				min = sentierMin(valide.first, s, e);
-				s.setSentier(valide.first, min, couts[valide.first][min]);
+				mini = sentierMin(valide.second, s, e);
+				s.setSentier(valide.second, mini, couts[valide.second][mini]);
 
-				//std::cout << valide.first << "-" << min << std::endl;
+				std::cout << valide.second << "-" << mini << std::endl;
 				break;
 			case ETAPE:
-				min = sentierMin(valide.first, s, e);
-				s.setSentier(valide.first, min, couts[valide.first][min]);
+				mini = sentierMin(valide.second, s, e);
+				s.setSentier(valide.second, mini, couts[valide.second][mini]);
 				break;
 			case ENTREE:
-				min = sentierMin(valide.first, s, e);
-				s.setSentier(valide.first, min, couts[valide.first][min]);
+				mini = sentierMin(valide.second, s, e);
+				s.setSentier(valide.second, mini, couts[valide.second][mini]);
 				break;
 			case MAXI:
-				max = sentierMax(sentiers[valide.first], nbPoints);
-				s.deleteSentier(valide.first, max);
+				maxi = sentierMax(sentiers[valide.second], nbPoints);
+				s.deleteSentier(valide.second, maxi);
+				s.setPrec(valide.second, maxi);
 				break;
 			default:
 				break;
