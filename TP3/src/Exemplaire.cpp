@@ -3,44 +3,27 @@
 
 Exemplaire::Exemplaire(int nbPoints) : nbPoints(nbPoints)
 {
-  types = new int[nbPoints];
+  types = std::vector<int>(nbPoints);
 
-  maxSentiers = new int[nbPoints];
+  maxSentiers = std::vector<int>(nbPoints);
 
-  couts = new float*[nbPoints];
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    couts[i] = new float[nbPoints];
-  }
+  couts = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints, 0));
 }
 
-Exemplaire::Exemplaire(int nbPoints, int* types, int* maxSentiers, float** couts) : nbPoints(nbPoints)
+Exemplaire::Exemplaire(int nbPoints, std::vector<int>& types, std::vector<int>& maxSentiers, std::vector<std::vector<float> >& couts) : nbPoints(nbPoints)
 {
-  this->types = new int[nbPoints];
+  this->types = std::vector<int>(nbPoints);
   setTypes(types);
-  
-  this->maxSentiers = new int[nbPoints];
+
+  this->maxSentiers = std::vector<int>(nbPoints);
   setMaxSentiers(maxSentiers);
 
-  this->couts = new float*[nbPoints];
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    this->couts[i] = new float[nbPoints];
-  }
+  couts = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints, 0));
   setCouts(couts);
 }
 
 Exemplaire::~Exemplaire()
 {
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    delete [] couts[i];
-  }
-  delete [] couts;
-
-  delete [] types;
-
-  delete [] maxSentiers;
 }
 
 void Exemplaire::setNbPoints(int nbPoints)
@@ -48,31 +31,19 @@ void Exemplaire::setNbPoints(int nbPoints)
   this->nbPoints = nbPoints;
 }
 
-void Exemplaire::setTypes(int* types)
+void Exemplaire::setTypes(std::vector<int>& types)
 {
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    this->types[i] = types[i];
-  }
+  this->types = types;
 }
 
-void Exemplaire::setMaxSentiers(int* maxSentiers)
+void Exemplaire::setMaxSentiers(std::vector<int>& maxSentiers)
 {
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    this->maxSentiers[i] = maxSentiers[i];
-  }
+  this->maxSentiers = maxSentiers;
 }
 
-void Exemplaire::setCouts(float** couts)
+void Exemplaire::setCouts(std::vector<std::vector<float> >& couts)
 {
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    for (int j = 0; j < nbPoints; ++j)
-    {
-      this->couts[i][j] = couts[i][j];
-    }
-  }
+  this->couts = couts;
 }
 
 int Exemplaire::getNbPoints()
@@ -80,17 +51,17 @@ int Exemplaire::getNbPoints()
   return nbPoints;
 }
 
-int* Exemplaire::getTypes()
+std::vector<int> Exemplaire::getTypes()
 {
   return types;
 }
 
-int* Exemplaire::getMaxSentiers()
+std::vector<int> Exemplaire::getMaxSentiers()
 {
   return maxSentiers;
 }
 
-float** Exemplaire::getCouts()
+std::vector<std::vector<float> > Exemplaire::getCouts()
 {
   return couts;
 }

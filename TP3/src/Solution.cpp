@@ -4,21 +4,9 @@
 
 Solution::Solution(int nbPoints) : nbPoints(nbPoints)
 {
-  sentiers = new float*[nbPoints];
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    sentiers[i] = new float[nbPoints];
-  }
-  nbIncidents = new int[nbPoints];
+  sentiers = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints, 0));
 
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    for (int j = 0; j < nbPoints; ++j)
-    {
-      sentiers[i][j] = 0;
-    }
-    nbIncidents[i] = 0;
-  }
+  nbIncidents = std::vector<int>(nbPoints, 0);
 
   coutTotal = 0;
   prec = std::pair<int, int>(0, 0);
@@ -26,12 +14,6 @@ Solution::Solution(int nbPoints) : nbPoints(nbPoints)
 
 Solution::~Solution()
 {
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    delete [] sentiers[i];
-  }
-  delete [] sentiers;
-  delete [] nbIncidents;
 }
 
 void Solution::setNbPoints(int nbPoints)
@@ -39,7 +21,7 @@ void Solution::setNbPoints(int nbPoints)
   this->nbPoints = nbPoints;
 }
 
-void Solution::setNbIncidents(int* nbIncidents)
+void Solution::setNbIncidents(std::vector<int>& nbIncidents)
 {
   this->nbIncidents = nbIncidents;
 }
@@ -70,7 +52,7 @@ void Solution::setPrec(int depart, int arrivee)
     prec = std::pair<int, int>(depart, arrivee);
 }
 
-void Solution::setSentiers(float** sentiers)
+void Solution::setSentiers(std::vector<std::vector<float> >& sentiers)
 {
   this->sentiers = sentiers;
 }
@@ -80,12 +62,12 @@ int Solution::getNbPoints()
   return nbPoints;
 }
 
-int* Solution::getNbIncidents()
+std::vector<int> Solution::getNbIncidents()
 {
   return nbIncidents;
 }
 
-float** Solution::getSentiers()
+std::vector<std::vector<float> > Solution::getSentiers()
 {
   return sentiers;
 }
@@ -114,6 +96,7 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
   // 5. Chaque point d'interêt possède un nombre limité de sentiers incidents
   for (int i = 0; i < nbPoints; ++i)
   {
+    std::cout << i << " " << nbIncidents[i] << " " << e.getMaxSentiers()[i] << std::endl;
     if (nbIncidents[i] > e.getMaxSentiers()[i])
     {
       return std::pair<Erreur, int>(MAXI, i);
@@ -139,7 +122,8 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
   }
 
     // 1. Pour chaque point d'interêt, il doit exister un chemin qui le relie à une entrée du parc
-  bool* visites = new bool[nbPoints];
+  std::vector<int> visites(nbPoints, false);
+  std::vector<int> types = e.getTypes();
   for (int i = 0; i < nbPoints; ++i)
   {
     if (e.getTypes()[i] != ENTREE)
@@ -152,14 +136,13 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
       {
         visites[j] = false;
       }
-      bool relie = relieEntree(sentiers, i, e.getTypes(), nbPoints, visites);
+      bool relie = relieEntree(sentiers, i, types, nbPoints, visites);
       if (!relie)
       {
         return std::pair<Erreur, int>(LIEN, i);
       }
     }
   }
-  delete [] visites;
 
   return std::pair<Erreur, int>(OK, 0);
 }

@@ -10,12 +10,12 @@
 
 Exemplaire* lireFichier(std::string nom);
 
-bool relieEntree(float** sentiers, int point, int* types, int nbPoints, bool* visites);
+bool relieEntree(std::vector<std::vector<float> >& sentiers, int point, std::vector<int>& types, int nbPoints, std::vector<int>& visites);
 
 int sentierMin(int& noeud, Solution &s, Exemplaire &e);
 
-int sentierMax(float* sentiers, int nbPoints);
+int sentierMax(Solution& s, int noeud);
 
-int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<bool>& visites);
+int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<int>& visites);
 
 #endif

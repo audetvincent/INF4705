@@ -16,14 +16,14 @@ public:
   Solution(int nbPoints);
   ~Solution();
   void setNbPoints(int nbPoints);
-  void setNbIncidents(int* nbIncidents);
+  void setNbIncidents(std::vector<int>& nbIncidents);
   void setSentier(int depart, int arrivee, float cout);
-  void setSentiers(float** sentiers);
+  void setSentiers(std::vector<std::vector<float> >& sentiers);
   void deleteSentier(int depart, int arrivee);
   void setPrec(int depart, int arrivee);
   int getNbPoints();
-  int* getNbIncidents();
-  float** getSentiers();
+  std::vector<int> getNbIncidents();
+  std::vector<std::vector<float> > getSentiers();
   float getCoutTotal();
   std::pair<int, int> getPrec();
   std::pair<Erreur, int> verifier(Exemplaire& e);
@@ -32,8 +32,8 @@ public:
 
 private:
   int nbPoints;
-  int* nbIncidents;
-  float** sentiers;
+  std::vector<int> nbIncidents;
+  std::vector<std::vector<float> > sentiers;
   float coutTotal;
   std::pair<int, int> prec;
 };

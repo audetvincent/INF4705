@@ -38,7 +38,9 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  std::vector<int> parent = primMST(e->getCouts(), e->getNbPoints());
+  std::vector<std::vector<float> > couts = e->getCouts();
+  int nbPoints = e->getNbPoints();
+  std::vector<int> parent = primMST(couts, nbPoints);
 
   Solution* s = new Solution(e->getNbPoints());
 

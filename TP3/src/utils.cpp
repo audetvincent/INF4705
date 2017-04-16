@@ -8,29 +8,25 @@ Exemplaire* lireFichier(std::string nom)
   if(fichier)
   {
     int nbPoints;
-    int* types;
-    int* maxSentiers;
-    float** couts;
+    std::vector<int> types;
+    std::vector<int> maxSentiers;
+    std::vector<std::vector<float> > couts;
 
     fichier >> nbPoints;
 
-    types = new int[nbPoints];
+    types = std::vector<int>(nbPoints);
     for (int i = 0; i < nbPoints; ++i)
     {
       fichier >> types[i];
     }
 
-    maxSentiers = new int[nbPoints];
+    maxSentiers = std::vector<int>(nbPoints);
     for (int i = 0; i < nbPoints; ++i)
     {
       fichier >> maxSentiers[i];
     }
 
-    couts = new float*[nbPoints];
-    for (int i = 0; i < nbPoints; ++i)
-    {
-      couts[i] = new float[nbPoints];
-    }
+    couts = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints, 0));
     for (int i = 0; i < nbPoints; ++i)
     {
       for (int j = 0; j < nbPoints; ++j)
@@ -46,13 +42,6 @@ Exemplaire* lireFichier(std::string nom)
 
     Exemplaire* p = new Exemplaire(nbPoints, types, maxSentiers, couts);
 
-    for (int i = 0; i < nbPoints; ++i)
-    {
-      delete [] couts[i];
-    }
-    delete [] couts;
-    delete [] maxSentiers;
-    delete [] types;
     fichier.close();
 
     return p;
@@ -66,7 +55,7 @@ Exemplaire* lireFichier(std::string nom)
 }
 
 
-bool relieEntree(float** sentiers, int point, int* types, int nbPoints, bool* visites)
+bool relieEntree(std::vector<std::vector<float> >& sentiers, int point, std::vector<int>& types, int nbPoints, std::vector<int>& visites)
 {
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -81,9 +70,9 @@ bool relieEntree(float** sentiers, int point, int* types, int nbPoints, bool* vi
 
   for (int i = 0; i < nbPoints; ++i)
   {
-    if (sentiers[point][i] != 0 && visites[i] == false)
+    if (sentiers[point][i] != 0 && visites[i] == 0)
     {
-      visites[i] = true;
+      visites[i] = 1;
       if (relieEntree(sentiers, i, types, nbPoints, visites))
         return true;
     }
@@ -93,24 +82,24 @@ bool relieEntree(float** sentiers, int point, int* types, int nbPoints, bool* vi
 }
 
 
-int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<bool>& visites)
+int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<int>& visites)
 {
     int nbPoints = e.getNbPoints();
-	float** sentiers = s.getSentiers();
-	int* nbSentiers = s.getNbIncidents();
-	int* maxSentiers = e.getMaxSentiers();
-	int* types = e.getTypes();
+	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	std::vector<int> nbSentiers = s.getNbIncidents();
+	std::vector<int> maxSentiers = e.getMaxSentiers();
+	std::vector<int> types = e.getTypes();
 
     for(int i = 0; i < nbPoints; ++i)
 	{
-		if(sentiers[noeud][i] > 0 && nbSentiers[i] < maxSentiers[i] && visites[i] == false)
+		if(sentiers[noeud][i] > 0 && nbSentiers[i] < maxSentiers[i] && visites[i] == 0)
 			return i;
 	}
 	for(int i = 0; i < nbPoints; ++i)
 	{
-		if(sentiers[noeud][i] > 0 && types[i] != PT_DE_VUE && visites[i] == false)
+		if(sentiers[noeud][i] > 0 && types[i] != PT_DE_VUE && visites[i] == 0)
         {
-            visites[i] = true;
+            visites[i] = 1;
             return trouverNoeudEnfant(s, e, i, visites);
         }
 	}
@@ -121,15 +110,16 @@ int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<bool>&
 int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 {
 	int nbPoints = e.getNbPoints();
-	int coutMin = INT_MAX, mini = nbPoints, miniCout = 0, noeudEnfant;
-	float** couts = e.getCouts();
-	float** sentiers = s.getSentiers();
-	int* nbSentiers = s.getNbIncidents();
-	int* maxSentiers = e.getMaxSentiers();
-	int* types = e.getTypes();
+	int mini = nbPoints, miniCout = 0, noeudEnfant;
+	float coutMin = LONG_MAX;
+	std::vector<std::vector<float> > couts = e.getCouts();
+	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	std::vector<int> nbSentiers = s.getNbIncidents();
+	std::vector<int> maxSentiers = e.getMaxSentiers();
+	std::vector<int> types = e.getTypes();
 	std::pair<int, int> prec = s.getPrec();
 
-	std::vector<bool> visites(nbPoints, false);
+	std::vector<int> visites(nbPoints, false);
 	visites[noeud] = true;
 	if (nbSentiers[noeud] >= maxSentiers[noeud])
     {
@@ -164,18 +154,25 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 	return mini;
 }
 
-int sentierMax(float* sentiers, int nbPoints)
+int sentierMax(Solution& s, int noeud)
 {
-	int coutMax = 0, maxi = 0;
+    int nbPoints = s.getNbPoints();
+	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	std::pair<int, int> prec = s.getPrec();
+
+	int maxi = 0;
+	float coutMax = 0;
 	for (int i = 0; i < nbPoints; ++i)
 	{
-		if (sentiers[i] > coutMax)
+		if ((sentiers[noeud][i] > coutMax) &&
+            !((noeud == prec.first && i == prec.second) || (noeud == prec.second && i == prec.first)))
         {
-            coutMax = sentiers[i];
+            coutMax = sentiers[noeud][i];
 			maxi = i;
         }
 	}
 
+    s.setPrec(noeud, maxi);
 	return maxi;
 }
 

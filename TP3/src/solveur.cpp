@@ -4,15 +4,15 @@
 #include <stdio.h>
 #include <deque>
 
-Solution* trouverPremiereSolution(Exemplaire& e)
+/*Solution* trouverPremiereSolution(Exemplaire& e)
 {
   int nbPoints = e.getNbPoints();
-  int* types = e.getTypes();
-  int* maxSentiers = e.getMaxSentiers();
-  float** couts = e.getCouts();
+  std::vector<int> types = e.getTypes();
+  std::vector<int> maxSentiers = e.getMaxSentiers();
+  std::vector<std::vector<float> > couts = e.getCouts();
   Solution* s = new Solution(nbPoints);
-  int* nbIncidents = s->getNbIncidents();
-  float** sentiers = s->getSentiers();
+  std::vector<int> nbIncidents = s->getNbIncidents();
+  std::vector<std::vector<float> > sentiers = s->getSentiers();
 
   // Assignation vorace des points de vue
   for (int i = 0; i < nbPoints; ++i)
@@ -54,7 +54,7 @@ Solution* trouverPremiereSolution(Exemplaire& e)
   }
 
   // Assignation vorace des etapes en fonction des assignations precedentes
-  bool* visites = new bool[nbPoints];
+  std::vector<int> visites = new bool[nbPoints];
   for (int i = 0; i < nbPoints; ++i)
   {
     if (types[i] == ETAPE)
@@ -118,26 +118,31 @@ Solution* trouverPremiereSolution(Exemplaire& e)
   }
 
   return s;
-}
+}*/
 
 // From  : http://www.geeksforgeeks.org/greedy-algorithms-set-5-prims-minimum-spanning-tree-mst-2/
 // A utility function to find the vertex with minimum key value, from
 // the set of vertices not yet included in MST
-int minKey(std::vector<float> key, std::vector<bool> mstSet, int nbPoints)
+int minKey(std::vector<float>& key, std::vector<int>& mstSet, int nbPoints)
 {
    // Initialize min value
-   float min = LONG_MAX;
-   int min_index;
+    float mini = LONG_MAX;
+    int min_index;
 
-   for (int v = 0; v < nbPoints; v++)
-     if (mstSet[v] == false && key[v] < min)
-         min = key[v], min_index = v;
+    for (int v = 0; v < nbPoints; v++)
+    {
+        if (mstSet[v] == 0 && key[v] < mini)
+        {
+            mini = key[v], min_index = v;
+            std::cout << min_index << std::endl;
+        }
+    }
 
-   return min_index;
+    return min_index;
 }
 
 // A utility function to print the constructed MST stored in parent[]
-void printMST(std::vector<int> parent, int n, float** graph, int nbPoints)
+void printMST(std::vector<int>& parent, int n, std::vector<std::vector<float> >& graph, int nbPoints)
 {
    printf("Edge   Weight\n");
    for (int i = 1; i < nbPoints; i++)
@@ -146,11 +151,11 @@ void printMST(std::vector<int> parent, int n, float** graph, int nbPoints)
 
 // Function to construct and print MST for a graph represented using adjacency
 // matrix representation
-std::vector<int> primMST(float** graph, int nbPoints)
+std::vector<int> primMST(std::vector<std::vector<float> >& graph, int nbPoints)
 {
      std::vector<int> parent(nbPoints, 0); // Array to store constructed MST
      std::vector<float> key(nbPoints, LONG_MAX);   // Key values used to pick minimum weight edge in cut
-     std::vector<bool> mstSet(nbPoints, false);  // To represent set of vertices not yet included in MST
+     std::vector<int> mstSet(nbPoints);  // To represent set of vertices not yet included in MST
 
      // Always include first 1st vertex in MST.
      key[0] = 0;     // Make key 0 so that this vertex is picked as first vertex
@@ -164,7 +169,7 @@ std::vector<int> primMST(float** graph, int nbPoints)
         int u = minKey(key, mstSet, nbPoints);
 
         // Add the picked vertex to the MST Set
-        mstSet[u] = true;
+        mstSet[u] = 1;
 
         // Update key value and parent index of the adjacent vertices of
         // the picked vertex. Consider only those vertices which are not yet
@@ -174,7 +179,7 @@ std::vector<int> primMST(float** graph, int nbPoints)
            // graph[u][v] is non zero only for adjacent vertices of m
            // mstSet[v] is false for vertices not yet included in MST
            // Update the key only if graph[u][v] is smaller than key[v]
-          if (graph[u][v] && mstSet[v] == false && graph[u][v] <  key[v])
+          if (graph[u][v] && mstSet[v] == 0 && graph[u][v] <  key[v])
              parent[v]  = u, key[v] = graph[u][v];
      }
 
@@ -186,11 +191,11 @@ std::vector<int> primMST(float** graph, int nbPoints)
 void amelioration(Solution &s, Exemplaire &e)
 {
 	int nbPoints = e.getNbPoints();
-	float** sentiers = s.getSentiers();
+	std::vector<std::vector<float> > sentiers = s.getSentiers();
 	std::pair<Erreur, int> valide = s.verifier(e);
 	std::deque<std::pair<int, float>> arcs;
 	int mini = 0, maxi = 0;
-	float** couts = e.getCouts();
+	std::vector<std::vector<float> > couts = e.getCouts();
 
 	if (valide.first == OK)
 	{
@@ -239,9 +244,8 @@ void amelioration(Solution &s, Exemplaire &e)
 				s.setSentier(valide.second, mini, couts[valide.second][mini]);
 				break;
 			case MAXI:
-				maxi = sentierMax(sentiers[valide.second], nbPoints);
+				maxi = sentierMax(s, valide.second);
 				s.deleteSentier(valide.second, maxi);
-				s.setPrec(valide.second, maxi);
 				break;
 			default:
 				break;
@@ -253,6 +257,7 @@ void amelioration(Solution &s, Exemplaire &e)
 		if (valide.first == OK)
 		{
 			s.afficher();
+			s.verifier(e);
 			exit(0);
 		}
 	}
