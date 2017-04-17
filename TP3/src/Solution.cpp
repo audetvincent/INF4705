@@ -97,14 +97,14 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
     }
   }
 
-  // 4. Les points de vue ne sont accessibles que par un seul sentier
+  /*// 4. Les points de vue ne sont accessibles que par un seul sentier
   for (int i = 0; i < nbPoints; ++i)
   {
     if (e.getTypes()[i] == PT_DE_VUE && nbIncidents[i] > 1)
     {
       return std::pair<Erreur, int>(PT_DE_VUE, i);
     }
-  }
+  }*/
 
   // 5. Chaque point d'interêt possède un nombre limité de sentiers incidents
   for (int i = 0; i < nbPoints; ++i)
