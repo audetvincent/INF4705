@@ -156,7 +156,7 @@ void Solution::afficher()
   {
     for (int j = 0; j < i; ++j)
     {
-      if (sentiers[i][j] != 0)
+      if (sentiers[i][j] > 0)
       {
         std::cout << i << " " << j << std::endl;
       }

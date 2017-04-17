@@ -181,25 +181,29 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 	int i = 0;
 	while(it != couts[noeud].end())
     {
-        chemins.insert(std::pair<float, int>(*it, i));
+        if (*it > 0 && sentiers[noeud][i] == 0)
+        {
+            chemins.insert(std::pair<float, int>(*it, i));
+        }
         i++;
         ++it;
     }
+
 	auto mapIt = chemins.begin(); // map deja triee par defaut
 	float nouveauCout = s.getCoutTotal() + mapIt->first;
-	if (couts[noeud][mapIt->second] > 0 && nbSentiers[mapIt->second] < maxSentiers[mapIt->second])
-	{
-	    mini = mapIt->second;
-	}
-	while((s.estTabou(nouveauCout) || mini == nbPoints) && mapIt != chemins.end())
+    mini = mapIt->second;
+	while(s.estTabou(nouveauCout) && mapIt != chemins.end())
     {
         nouveauCout -= mapIt->first;
         ++mapIt;
         nouveauCout += mapIt->first;
-        if (couts[noeud][mapIt->second] > 0 && nbSentiers[mapIt->second] < maxSentiers[mapIt->second])
-        {
-            mini = mapIt->second;
-        }
+        mini = mapIt->second;
+    }
+
+    if (mapIt == chemins.end())
+    {
+        --mapIt;
+        mini = mapIt->second;
     }
 
 	return mini;
@@ -217,19 +221,28 @@ int sentierMax(Solution& s, int noeud)
 	int i = 0;
 	while(it != sentiers[noeud].end())
     {
-        chemins.insert(std::pair<float, int>(*it, i));
+        if (*it > 0)
+        {
+            chemins.insert(std::pair<float, int>(*it, i));
+        }
         ++it;
         i++;
     }
-    auto mapIt = chemins.end(); // map deja triee par defaut
-    --mapIt;
+
+    auto mapIt = chemins.rbegin(); // map deja triee par defaut
 	float nouveauCout = s.getCoutTotal() - mapIt->first;
-    maxi = mapIt->second;
-	while(s.estTabou(nouveauCout) && mapIt != chemins.begin())
+	maxi = mapIt->second;
+	while(s.estTabou(nouveauCout) && mapIt != chemins.rend())
     {
         nouveauCout += mapIt->first;
         --mapIt;
         nouveauCout -= mapIt->first;
+        maxi = mapIt->second;
+    }
+
+    if (mapIt == chemins.rend())
+    {
+        --mapIt;
         maxi = mapIt->second;
     }
 
