@@ -181,7 +181,7 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 	int i = 0;
 	while(it != couts[noeud].end())
     {
-        if (*it > 0 && sentiers[noeud][i] == 0)
+        if (*it > 0 && sentiers[noeud][i] == 0 && types[i] != PT_DE_VUE && nbSentiers[i] <= maxSentiers[i])
         {
             chemins.insert(std::pair<float, int>(*it, i));
         }
@@ -189,22 +189,21 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
         ++it;
     }
 
-	auto mapIt = chemins.begin(); // map deja triee par defaut
-	float nouveauCout = s.getCoutTotal() + mapIt->first;
-    mini = mapIt->second;
-	while(s.estTabou(nouveauCout) && mapIt != chemins.end())
-    {
-        nouveauCout -= mapIt->first;
-        ++mapIt;
-        nouveauCout += mapIt->first;
+        auto mapIt = chemins.begin(); // map deja triee par defaut
+        float nouveauCout = s.getCoutTotal() + mapIt->first;
         mini = mapIt->second;
-    }
+        while(s.estTabou(nouveauCout) && mapIt != chemins.end())
+        {
+            nouveauCout -= mapIt->first;
+            ++mapIt;
+            nouveauCout += mapIt->first;
+            mini = mapIt->second;
+        }
 
-    if (mapIt == chemins.end())
-    {
-        --mapIt;
-        mini = mapIt->second;
-    }
+        if (mapIt == chemins.end())
+        {
+            mini = chemins.rbegin()->second;
+        }
 
 	return mini;
 }
@@ -235,15 +234,14 @@ int sentierMax(Solution& s, int noeud)
 	while(s.estTabou(nouveauCout) && mapIt != chemins.rend())
     {
         nouveauCout += mapIt->first;
-        --mapIt;
+        ++mapIt;
         nouveauCout -= mapIt->first;
         maxi = mapIt->second;
     }
 
     if (mapIt == chemins.rend())
     {
-        --mapIt;
-        maxi = mapIt->second;
+        maxi = chemins.begin()->second;
     }
 
 	return maxi;

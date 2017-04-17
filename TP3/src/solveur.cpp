@@ -202,7 +202,7 @@ void amelioration(Solution &s, Exemplaire &e)
 	std::vector<std::vector<float> > couts = e.getCouts();
 
 	s.addTabou(s.getCoutTotal());
-	s.afficher();
+	//s.afficher();
 
 	if (valide.first == OK)
 	{
@@ -211,7 +211,8 @@ void amelioration(Solution &s, Exemplaire &e)
 
 	while(1)
 	{
-		std::cout << valide.first << std::endl;
+	    sentiers = s.getSentiers();
+		//std::cout << valide.first << std::endl;
 		switch(valide.first)
 		{
 			// TODO : CONTRAINTES
@@ -239,7 +240,7 @@ void amelioration(Solution &s, Exemplaire &e)
 				mini = sentierMin(valide.second, s, e);
 				s.setSentier(valide.second, mini, couts[valide.second][mini]);
 
-				std::cout << valide.second << "-" << mini << std::endl;
+				//std::cout << valide.second << "-" << mini << std::endl;
 				break;
 			case ETAPE:
 				mini = sentierMin(valide.second, s, e);
@@ -259,7 +260,7 @@ void amelioration(Solution &s, Exemplaire &e)
 
 
         s.addTabou(s.getCoutTotal());
-		s.afficher();
+		//s.afficher();
 
 		valide = s.verifier(e);
 		if (valide.first == OK)

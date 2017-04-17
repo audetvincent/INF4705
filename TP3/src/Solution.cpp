@@ -50,7 +50,7 @@ void Solution::deleteSentier(int depart, int arrivee)
 void Solution::addTabou(float coutTotal)
 {
     tabou.push_back(coutTotal);
-    if (tabou.size() > 30)
+    if (tabou.size() > 500)
     {
         tabou.pop_front();
     }
@@ -88,6 +88,15 @@ std::deque<float> Solution::getTabou()
 
 std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
 {
+  // 2. Chaque point doit etre present (Chaque entrée du parc doit être le départ d'au moins un sentier)
+  for (int i = 0; i < nbPoints; ++i)
+  {
+    if (nbIncidents[i] < 1)
+    {
+      return std::pair<Erreur, int>(ENTREE, i);
+    }
+  }
+
   // 4. Les points de vue ne sont accessibles que par un seul sentier
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -115,16 +124,7 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
     }
   }
 
-  // 2. Chaque entrée du parc doit être le départ d'au moins un sentier
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    if (e.getTypes()[i] == ENTREE && nbIncidents[i] < 1)
-    {
-      return std::pair<Erreur, int>(ENTREE, i);
-    }
-  }
-
-    // 1. Pour chaque point d'interêt, il doit exister un chemin qui le relie à une entrée du parc
+  // 1. Pour chaque point d'interêt, il doit exister un chemin qui le relie à une entrée du parc
   std::vector<int> visites(nbPoints, false);
   std::vector<int> types = e.getTypes();
   for (int i = 0; i < nbPoints; ++i)
