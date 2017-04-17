@@ -12,14 +12,9 @@ Exemplaire::Exemplaire(int nbPoints) : nbPoints(nbPoints)
 
 Exemplaire::Exemplaire(int nbPoints, std::vector<int>& types, std::vector<int>& maxSentiers, std::vector<std::vector<float> >& couts) : nbPoints(nbPoints)
 {
-  this->types = std::vector<int>(nbPoints);
-  setTypes(types);
-
-  this->maxSentiers = std::vector<int>(nbPoints);
-  setMaxSentiers(maxSentiers);
-
-  couts = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints, 0));
-  setCouts(couts);
+  this->types = std::vector<int>(types);
+  this->maxSentiers = std::vector<int>(maxSentiers);
+  this->couts = std::vector<std::vector<float> >(couts);
 }
 
 Exemplaire::~Exemplaire()

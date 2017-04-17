@@ -7,6 +7,7 @@
 
 #include "Exemplaire.h"
 #include <utility>
+#include <deque>
 
 enum Erreur{OK, PT_DE_VUE, ENTREE, ETAPE, MAXI, LIEN};
 
@@ -20,22 +21,23 @@ public:
   void setSentier(int depart, int arrivee, float cout);
   void setSentiers(std::vector<std::vector<float> >& sentiers);
   void deleteSentier(int depart, int arrivee);
-  void setPrec(int depart, int arrivee);
+  void addTabou(float coutTotal);
   int getNbPoints();
   std::vector<int> getNbIncidents();
   std::vector<std::vector<float> > getSentiers();
   float getCoutTotal();
-  std::pair<int, int> getPrec();
+  std::deque<float> getTabou();
   std::pair<Erreur, int> verifier(Exemplaire& e);
   void afficher();
   float calculer();
+  bool estTabou(float coutTotal);
 
 private:
   int nbPoints;
   std::vector<int> nbIncidents;
   std::vector<std::vector<float> > sentiers;
   float coutTotal;
-  std::pair<int, int> prec;
+  std::deque<float> tabou;
 };
 
 #endif

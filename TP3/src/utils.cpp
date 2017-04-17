@@ -1,5 +1,7 @@
 #include "utils.h"
 #include <iostream>
+#include <map>
+#include <algorithm>
 
 Exemplaire* lireFichier(std::string nom)
 {
@@ -26,7 +28,7 @@ Exemplaire* lireFichier(std::string nom)
       fichier >> maxSentiers[i];
     }
 
-    couts = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints, 0));
+    couts = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints));
     for (int i = 0; i < nbPoints; ++i)
     {
       for (int j = 0; j < nbPoints; ++j)
@@ -40,11 +42,11 @@ Exemplaire* lireFichier(std::string nom)
       }
     }
 
-    Exemplaire* p = new Exemplaire(nbPoints, types, maxSentiers, couts);
+    Exemplaire* e = new Exemplaire(nbPoints, types, maxSentiers, couts);
 
     fichier.close();
 
-    return p;
+    return e;
   }
 
   else
@@ -107,7 +109,7 @@ int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<int>& 
 	return nbPoints;
 }
 
-int sentierMin(int& noeud, Solution &s, Exemplaire &e)
+/*int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 {
 	int nbPoints = e.getNbPoints();
 	int mini = nbPoints, miniCout = 0, noeudEnfant;
@@ -152,27 +154,85 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
     }
     s.setPrec(noeud, mini);
 	return mini;
+}*/
+
+int sentierMin(int& noeud, Solution &s, Exemplaire &e)
+{
+	int nbPoints = e.getNbPoints();
+	int noeudEnfant;
+	int mini = nbPoints;
+	std::vector<std::vector<float> > couts = e.getCouts();
+	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	std::vector<int> nbSentiers = s.getNbIncidents();
+	std::vector<int> maxSentiers = e.getMaxSentiers();
+	std::vector<int> types = e.getTypes();
+
+	std::vector<int> visites(nbPoints, false);
+	visites[noeud] = true;
+	if (nbSentiers[noeud] >= maxSentiers[noeud])
+    {
+        noeudEnfant = trouverNoeudEnfant(s, e, noeud, visites);
+        if (noeudEnfant != nbPoints)
+            noeud = noeudEnfant;
+    }
+
+	std::map<float, int> chemins;
+	auto it = couts[noeud].begin();
+	int i = 0;
+	while(it != couts[noeud].end())
+    {
+        chemins.insert(std::pair<float, int>(*it, i));
+        i++;
+        ++it;
+    }
+	auto mapIt = chemins.begin(); // map deja triee par defaut
+	float nouveauCout = s.getCoutTotal() + mapIt->first;
+	if (couts[noeud][mapIt->second] > 0 && nbSentiers[mapIt->second] < maxSentiers[mapIt->second])
+	{
+	    mini = mapIt->second;
+	}
+	while((s.estTabou(nouveauCout) || mini == nbPoints) && mapIt != chemins.end())
+    {
+        nouveauCout -= mapIt->first;
+        ++mapIt;
+        nouveauCout += mapIt->first;
+        if (couts[noeud][mapIt->second] > 0 && nbSentiers[mapIt->second] < maxSentiers[mapIt->second])
+        {
+            mini = mapIt->second;
+        }
+    }
+
+	return mini;
 }
 
 int sentierMax(Solution& s, int noeud)
 {
-    int nbPoints = s.getNbPoints();
 	std::vector<std::vector<float> > sentiers = s.getSentiers();
-	std::pair<int, int> prec = s.getPrec();
+    std::vector<int> nbSentiers = s.getNbIncidents();
+	int nbPoints = s.getNbPoints();
+    int maxi = nbPoints;
 
-	int maxi = 0;
-	float coutMax = 0;
-	for (int i = 0; i < nbPoints; ++i)
-	{
-		if ((sentiers[noeud][i] > coutMax) &&
-            !((noeud == prec.first && i == prec.second) || (noeud == prec.second && i == prec.first)))
-        {
-            coutMax = sentiers[noeud][i];
-			maxi = i;
-        }
-	}
+	std::map<float, int> chemins;
+	auto it = sentiers[noeud].begin();
+	int i = 0;
+	while(it != sentiers[noeud].end())
+    {
+        chemins.insert(std::pair<float, int>(*it, i));
+        ++it;
+        i++;
+    }
+    auto mapIt = chemins.end(); // map deja triee par defaut
+    --mapIt;
+	float nouveauCout = s.getCoutTotal() - mapIt->first;
+    maxi = mapIt->second;
+	while(s.estTabou(nouveauCout) && mapIt != chemins.begin())
+    {
+        nouveauCout += mapIt->first;
+        --mapIt;
+        nouveauCout -= mapIt->first;
+        maxi = mapIt->second;
+    }
 
-    s.setPrec(noeud, maxi);
 	return maxi;
 }
 

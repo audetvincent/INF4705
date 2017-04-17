@@ -1,6 +1,7 @@
 #include "Solution.h"
 #include <iostream>
 #include "utils.h"
+#include <algorithm>
 
 Solution::Solution(int nbPoints) : nbPoints(nbPoints)
 {
@@ -9,7 +10,6 @@ Solution::Solution(int nbPoints) : nbPoints(nbPoints)
   nbIncidents = std::vector<int>(nbPoints, 0);
 
   coutTotal = 0;
-  prec = std::pair<int, int>(0, 0);
 }
 
 Solution::~Solution()
@@ -47,9 +47,13 @@ void Solution::deleteSentier(int depart, int arrivee)
   coutTotal -= cout;
 }
 
-void Solution::setPrec(int depart, int arrivee)
+void Solution::addTabou(float coutTotal)
 {
-    prec = std::pair<int, int>(depart, arrivee);
+    tabou.push_back(coutTotal);
+    if (tabou.size() > 30)
+    {
+        tabou.pop_front();
+    }
 }
 
 void Solution::setSentiers(std::vector<std::vector<float> >& sentiers)
@@ -77,9 +81,9 @@ float Solution::getCoutTotal()
   return coutTotal;
 }
 
-std::pair<int, int> Solution::getPrec()
+std::deque<float> Solution::getTabou()
 {
-    return prec;
+    return tabou;
 }
 
 std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
@@ -96,7 +100,6 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
   // 5. Chaque point d'interêt possède un nombre limité de sentiers incidents
   for (int i = 0; i < nbPoints; ++i)
   {
-    std::cout << i << " " << nbIncidents[i] << " " << e.getMaxSentiers()[i] << std::endl;
     if (nbIncidents[i] > e.getMaxSentiers()[i])
     {
       return std::pair<Erreur, int>(MAXI, i);
@@ -176,3 +179,9 @@ float Solution::calculer()
 
   return coutTotal;
 }
+
+bool Solution::estTabou(float coutTotal)
+{
+    return std::find(tabou.begin(), tabou.end(), coutTotal) != tabou.end();
+}
+

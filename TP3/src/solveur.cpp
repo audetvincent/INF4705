@@ -127,14 +127,14 @@ int minKey(std::vector<float>& key, std::vector<int>& mstSet, int nbPoints)
 {
    // Initialize min value
     float mini = LONG_MAX;
-    int min_index;
+    int min_index = 0;
 
     for (int v = 0; v < nbPoints; v++)
     {
         if (mstSet[v] == 0 && key[v] < mini)
         {
-            mini = key[v], min_index = v;
-            std::cout << min_index << std::endl;
+            mini = key[v];
+            min_index = v;
         }
     }
 
@@ -146,7 +146,7 @@ void printMST(std::vector<int>& parent, int n, std::vector<std::vector<float> >&
 {
    printf("Edge   Weight\n");
    for (int i = 1; i < nbPoints; i++)
-      printf("%d - %d    %d \n", parent[i], i, graph[i][parent[i]]);
+      printf("%d - %d    %f \n", parent[i], i, graph[i][parent[i]]);
 }
 
 // Function to construct and print MST for a graph represented using adjacency
@@ -155,7 +155,7 @@ std::vector<int> primMST(std::vector<std::vector<float> >& graph, int nbPoints)
 {
      std::vector<int> parent(nbPoints, 0); // Array to store constructed MST
      std::vector<float> key(nbPoints, LONG_MAX);   // Key values used to pick minimum weight edge in cut
-     std::vector<int> mstSet(nbPoints);  // To represent set of vertices not yet included in MST
+     std::vector<int> mstSet(nbPoints, 0);  // To represent set of vertices not yet included in MST
 
      // Always include first 1st vertex in MST.
      key[0] = 0;     // Make key 0 so that this vertex is picked as first vertex
@@ -175,12 +175,16 @@ std::vector<int> primMST(std::vector<std::vector<float> >& graph, int nbPoints)
         // the picked vertex. Consider only those vertices which are not yet
         // included in MST
         for (int v = 0; v < nbPoints; v++)
-
+        {
            // graph[u][v] is non zero only for adjacent vertices of m
            // mstSet[v] is false for vertices not yet included in MST
            // Update the key only if graph[u][v] is smaller than key[v]
           if (graph[u][v] && mstSet[v] == 0 && graph[u][v] <  key[v])
-             parent[v]  = u, key[v] = graph[u][v];
+          {
+            parent[v]  = u;
+            key[v] = graph[u][v];
+          }
+        }
      }
 
 	 return parent;
@@ -197,6 +201,9 @@ void amelioration(Solution &s, Exemplaire &e)
 	int mini = 0, maxi = 0;
 	std::vector<std::vector<float> > couts = e.getCouts();
 
+	s.addTabou(s.getCoutTotal());
+	s.afficher();
+
 	if (valide.first == OK)
 	{
 		s.afficher();
@@ -205,7 +212,6 @@ void amelioration(Solution &s, Exemplaire &e)
 	while(1)
 	{
 		std::cout << valide.first << std::endl;
-        s.afficher();
 		switch(valide.first)
 		{
 			// TODO : CONTRAINTES
@@ -251,7 +257,9 @@ void amelioration(Solution &s, Exemplaire &e)
 				break;
 		}
 
-		//s.afficher();
+
+        s.addTabou(s.getCoutTotal());
+		s.afficher();
 
 		valide = s.verifier(e);
 		if (valide.first == OK)
