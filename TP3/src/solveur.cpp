@@ -3,6 +3,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <deque>
+#include <algorithm>
+#include <ctime>
 
 /*Solution* trouverPremiereSolution(Exemplaire& e)
 {
@@ -192,7 +194,7 @@ std::vector<int> primMST(std::vector<std::vector<float> >& graph, int nbPoints)
      //printMST(parent, nbPoints, graph, nbPoints);
 }
 
-void amelioration(Solution &s, Exemplaire &e)
+void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp, clock_t debut)
 {
 	int nbPoints = e.getNbPoints();
 	std::vector<std::vector<float> > sentiers = s.getSentiers();
@@ -200,13 +202,23 @@ void amelioration(Solution &s, Exemplaire &e)
 	std::deque<std::pair<int, float>> arcs;
 	int mini = 0, maxi = 0;
 	std::vector<std::vector<float> > couts = e.getCouts();
+	float meilleurCout = LONG_MAX;
+	std::vector<int> maxSentiers = e.getMaxSentiers();
 
 	s.addTabou(s.getCoutTotal());
 	//s.afficher();
 
 	if (valide.first == OK)
 	{
-		s.afficher();
+		if (afficherSol)
+        {
+            s.afficher();
+        }
+        if (afficherTmp)
+        {
+            std::cout << "Temps de calcul jusqu'a maintenant : " << (clock() - debut) / CLOCKS_PER_SEC << " secondes" << std::endl;
+        }
+        meilleurCout = s.getCoutTotal();
 	}
 
 	while(1)
@@ -215,7 +227,6 @@ void amelioration(Solution &s, Exemplaire &e)
 		//std::cout << valide.first << std::endl;
 		switch(valide.first)
 		{
-			// TODO : CONTRAINTES
 			case PT_DE_VUE:
 				for (int i = 0; i < nbPoints; ++i)
 				{
@@ -251,9 +262,27 @@ void amelioration(Solution &s, Exemplaire &e)
 				s.setSentier(valide.second, mini, couts[valide.second][mini]);
 				break;
 			case MAXI:
-				maxi = sentierMax(s, valide.second);
-				s.deleteSentier(valide.second, maxi);
+			    while (s.getNbIncidents()[valide.second] > maxSentiers[valide.second])
+                {
+                    maxi = sentierMax(s, valide.second);
+                    s.deleteSentier(valide.second, maxi);
+                }
 				break;
+            case OK:
+                if (s.getCoutTotal() < meilleurCout)
+                {
+                    if (afficherSol)
+                    {
+                        s.afficher();
+                    }
+                    if (afficherTmp)
+                    {
+                        std::cout << "Temps de calcul jusqu'a maintenant : " << (clock() - debut) / CLOCKS_PER_SEC  << " secondes" << std::endl;
+                    }
+                    meilleurCout = s.getCoutTotal();
+                }
+                deletePlusCherSentier(s);
+                break;
 			default:
 				break;
 		}
@@ -263,11 +292,28 @@ void amelioration(Solution &s, Exemplaire &e)
 		//s.afficher();
 
 		valide = s.verifier(e);
-		if (valide.first == OK)
-		{
-			s.afficher();
-			s.verifier(e);
-			exit(0);
-		}
 	}
+}
+
+void deletePlusCherSentier(Solution& s)
+{
+    auto sentiers = s.getSentiers();
+    int i = 0, j = 0;
+    float mini = INT_MAX;
+    std::vector<float>::iterator itMini;
+
+    auto itExt = sentiers.begin();
+    while(itExt != sentiers.end())
+    {
+        itMini = std::max_element(itExt->begin(), itExt->end());
+        if (*itMini < mini)
+        {
+            i = std::distance(sentiers.begin(), itExt);
+            j = std::distance(itExt->begin(), itMini);
+            mini = *itMini;
+        }
+        ++itExt;
+    }
+
+    s.deleteSentier(i, j);
 }

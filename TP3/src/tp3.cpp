@@ -8,6 +8,7 @@
 #include <iostream>
 #include "utils.h"
 #include "solveur.h"
+#include <cstring>
 
 int main(int argc, char* argv[])
 {
@@ -20,11 +21,11 @@ int main(int argc, char* argv[])
   }
   else if (argc == 3)
   {
-    if (argv[2] == "-p")
+    if (strncmp(argv[2], "-p", strlen(argv[2])) == 0)
     {
       afficher = true;
     }
-    else if (argv[2] == "-t")
+    else if (strncmp(argv[2], "-t", strlen(argv[2])) == 0)
     {
       temps = true;
     }
@@ -40,6 +41,7 @@ int main(int argc, char* argv[])
 
   std::vector<std::vector<float> > couts = e->getCouts();
   int nbPoints = e->getNbPoints();
+  clock_t debut = clock();
   std::vector<int> parent = primMST(couts, nbPoints);
 
   Solution* s = new Solution(e->getNbPoints());
@@ -47,9 +49,10 @@ int main(int argc, char* argv[])
   for (int i = 1; i < e->getNbPoints(); i++)
     s->setSentier(parent[i], i, e->getCouts()[i][parent[i]]);
 
-	amelioration(*s, *e);
+  amelioration(*s, *e, afficher, temps, debut);
 
-  delete e, s;
+  delete s;
+  delete e;
 
   return 0;
 }

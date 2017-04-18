@@ -4,6 +4,7 @@
 #include "Solution.h"
 #include "Exemplaire.h"
 #include <vector>
+#include <ctime>
 
 Solution* trouverPremiereSolution(Exemplaire& e);
 
@@ -13,6 +14,8 @@ void printMST(std::vector<int>& parent, int n, std::vector<std::vector<float> >&
 
 std::vector<int> primMST(std::vector<std::vector<float> >& graph, int nbPoints);
 
-void amelioration(Solution &s, Exemplaire &e);
+void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp, clock_t debut);
+
+void deletePlusCherSentier(Solution& s);
 
 #endif

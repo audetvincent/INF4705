@@ -50,10 +50,10 @@ void Solution::deleteSentier(int depart, int arrivee)
 void Solution::addTabou(float coutTotal)
 {
     tabou.push_back(coutTotal);
-    if (tabou.size() > 500)
+    /*if (tabou.size() > 500)
     {
         tabou.pop_front();
-    }
+    }*/
 }
 
 void Solution::setSentiers(std::vector<std::vector<float> >& sentiers)
@@ -135,10 +135,7 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
       {
         return std::pair<Erreur, int>(LIEN, i);
       }
-      for (int j = 0; j < nbPoints; ++j)
-      {
-        visites[j] = false;
-      }
+      std::fill(visites.begin(), visites.end(), false);
       bool relie = relieEntree(sentiers, i, types, nbPoints, visites);
       if (!relie)
       {
