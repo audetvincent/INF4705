@@ -5,7 +5,7 @@
 
 Solution::Solution(int nbPoints) : nbPoints(nbPoints)
 {
-  sentiers = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints, 0));
+  sentiers = std::vector<std::vector<double> >(nbPoints, std::vector<double>(nbPoints, 0));
 
   nbIncidents = std::vector<int>(nbPoints, 0);
 
@@ -26,7 +26,7 @@ void Solution::setNbIncidents(std::vector<int>& nbIncidents)
   this->nbIncidents = nbIncidents;
 }
 
-void Solution::setSentier(int depart, int arrivee, float cout)
+void Solution::setSentier(int depart, int arrivee, double cout)
 {
   sentiers[depart][arrivee] = cout;
   nbIncidents[depart]++;
@@ -38,7 +38,7 @@ void Solution::setSentier(int depart, int arrivee, float cout)
 
 void Solution::deleteSentier(int depart, int arrivee)
 {
-  float cout = sentiers[depart][arrivee];
+  double cout = sentiers[depart][arrivee];
   sentiers[depart][arrivee] = 0;
   nbIncidents[depart]--;
   sentiers[arrivee][depart] = 0;
@@ -47,7 +47,7 @@ void Solution::deleteSentier(int depart, int arrivee)
   coutTotal -= cout;
 }
 
-void Solution::addTabou(float coutTotal)
+void Solution::addTabou(double coutTotal)
 {
     tabou.push_back(coutTotal);
     /*if (tabou.size() > 500)
@@ -56,7 +56,7 @@ void Solution::addTabou(float coutTotal)
     }*/
 }
 
-void Solution::setSentiers(std::vector<std::vector<float> >& sentiers)
+void Solution::setSentiers(std::vector<std::vector<double> >& sentiers)
 {
   this->sentiers = sentiers;
 }
@@ -71,17 +71,17 @@ std::vector<int> Solution::getNbIncidents()
   return nbIncidents;
 }
 
-std::vector<std::vector<float> > Solution::getSentiers()
+std::vector<std::vector<double> > Solution::getSentiers()
 {
   return sentiers;
 }
 
-float Solution::getCoutTotal()
+double Solution::getCoutTotal()
 {
   return coutTotal;
 }
 
-std::deque<float> Solution::getTabou()
+std::deque<double> Solution::getTabou()
 {
     return tabou;
 }
@@ -163,7 +163,7 @@ void Solution::afficher()
   std::cout << "fin" << std::endl;
 }
 
-float Solution::calculer()
+double Solution::calculer()
 {
   coutTotal = 0;
   for (int i = 0; i < nbPoints; ++i)
@@ -177,7 +177,7 @@ float Solution::calculer()
   return coutTotal;
 }
 
-bool Solution::estTabou(float coutTotal)
+bool Solution::estTabou(double coutTotal)
 {
     return std::find(tabou.begin(), tabou.end(), coutTotal) != tabou.end();
 }

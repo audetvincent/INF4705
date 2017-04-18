@@ -11,10 +11,10 @@
   int nbPoints = e.getNbPoints();
   std::vector<int> types = e.getTypes();
   std::vector<int> maxSentiers = e.getMaxSentiers();
-  std::vector<std::vector<float> > couts = e.getCouts();
+  std::vector<std::vector<double> > couts = e.getCouts();
   Solution* s = new Solution(nbPoints);
   std::vector<int> nbIncidents = s->getNbIncidents();
-  std::vector<std::vector<float> > sentiers = s->getSentiers();
+  std::vector<std::vector<double> > sentiers = s->getSentiers();
 
   // Assignation vorace des points de vue
   for (int i = 0; i < nbPoints; ++i)
@@ -125,10 +125,10 @@
 // From  : http://www.geeksforgeeks.org/greedy-algorithms-set-5-prims-minimum-spanning-tree-mst-2/
 // A utility function to find the vertex with minimum key value, from
 // the set of vertices not yet included in MST
-int minKey(std::vector<float>& key, std::vector<int>& mstSet, int nbPoints)
+int minKey(std::vector<double>& key, std::vector<int>& mstSet, int nbPoints)
 {
    // Initialize min value
-    float mini = LONG_MAX;
+    double mini = LONG_MAX;
     int min_index = 0;
 
     for (int v = 0; v < nbPoints; v++)
@@ -144,7 +144,7 @@ int minKey(std::vector<float>& key, std::vector<int>& mstSet, int nbPoints)
 }
 
 // A utility function to print the constructed MST stored in parent[]
-void printMST(std::vector<int>& parent, int n, std::vector<std::vector<float> >& graph, int nbPoints)
+void printMST(std::vector<int>& parent, int n, std::vector<std::vector<double> >& graph, int nbPoints)
 {
    printf("Edge   Weight\n");
    for (int i = 1; i < nbPoints; i++)
@@ -153,10 +153,10 @@ void printMST(std::vector<int>& parent, int n, std::vector<std::vector<float> >&
 
 // Function to construct and print MST for a graph represented using adjacency
 // matrix representation
-std::vector<int> primMST(std::vector<std::vector<float> >& graph, int nbPoints)
+std::vector<int> primMST(std::vector<std::vector<double> >& graph, int nbPoints)
 {
      std::vector<int> parent(nbPoints, 0); // Array to store constructed MST
-     std::vector<float> key(nbPoints, LONG_MAX);   // Key values used to pick minimum weight edge in cut
+     std::vector<double> key(nbPoints, LONG_MAX);   // Key values used to pick minimum weight edge in cut
      std::vector<int> mstSet(nbPoints, 0);  // To represent set of vertices not yet included in MST
 
      // Always include first 1st vertex in MST.
@@ -197,12 +197,12 @@ std::vector<int> primMST(std::vector<std::vector<float> >& graph, int nbPoints)
 void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp, clock_t debut)
 {
 	int nbPoints = e.getNbPoints();
-	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	std::vector<std::vector<double> > sentiers = s.getSentiers();
 	std::pair<Erreur, int> valide = s.verifier(e);
-	std::deque<std::pair<int, float>> arcs;
+	std::deque<std::pair<int, double>> arcs;
 	int mini = 0, maxi = 0;
-	std::vector<std::vector<float> > couts = e.getCouts();
-	float meilleurCout = LONG_MAX;
+	std::vector<std::vector<double> > couts = e.getCouts();
+	double meilleurCout = LONG_MAX;
 	std::vector<int> maxSentiers = e.getMaxSentiers();
 
 	s.addTabou(s.getCoutTotal());
@@ -230,14 +230,14 @@ void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp
 			case PT_DE_VUE:
 				for (int i = 0; i < nbPoints; ++i)
 				{
-					float cout = sentiers[valide.second][i];
+					double cout = sentiers[valide.second][i];
 					if (cout > 0)
 					{
 						if (arcs.empty())
-							arcs.push_back(std::pair<int, float>(i, cout));
+							arcs.push_back(std::pair<int, double>(i, cout));
 						else if (cout < arcs[0].second)
 						{
-							arcs.push_front(std::pair<int, float>(i, cout));
+							arcs.push_front(std::pair<int, double>(i, cout));
 							s.deleteSentier(valide.second, arcs.back().first);
 							arcs.pop_back();
 						}
@@ -274,6 +274,7 @@ void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp
                     if (afficherSol)
                     {
                         s.afficher();
+                        std::cout << s.getCoutTotal() << std::endl;
                     }
                     if (afficherTmp)
                     {
@@ -297,23 +298,10 @@ void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp
 
 void deletePlusCherSentier(Solution& s)
 {
-    auto sentiers = s.getSentiers();
-    int i = 0, j = 0;
-    float mini = INT_MAX;
-    std::vector<float>::iterator itMini;
+    auto nbIncidents = s.getNbIncidents();
 
-    auto itExt = sentiers.begin();
-    while(itExt != sentiers.end())
-    {
-        itMini = std::max_element(itExt->begin(), itExt->end());
-        if (*itMini < mini)
-        {
-            i = std::distance(sentiers.begin(), itExt);
-            j = std::distance(itExt->begin(), itMini);
-            mini = *itMini;
-        }
-        ++itExt;
-    }
-
-    s.deleteSentier(i, j);
+    auto itMax = std::max_element(nbIncidents.begin(), nbIncidents.end());
+    int noeud = std::distance(nbIncidents.begin(), itMax);
+    int maxi = sentierMax(s, noeud);
+    s.deleteSentier(noeud, maxi);
 }

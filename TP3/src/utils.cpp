@@ -12,7 +12,7 @@ Exemplaire* lireFichier(std::string nom)
     int nbPoints;
     std::vector<int> types;
     std::vector<int> maxSentiers;
-    std::vector<std::vector<float> > couts;
+    std::vector<std::vector<double> > couts;
 
     fichier >> nbPoints;
 
@@ -28,7 +28,7 @@ Exemplaire* lireFichier(std::string nom)
       fichier >> maxSentiers[i];
     }
 
-    couts = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints));
+    couts = std::vector<std::vector<double> >(nbPoints, std::vector<double>(nbPoints));
     for (int i = 0; i < nbPoints; ++i)
     {
       for (int j = 0; j < nbPoints; ++j)
@@ -57,7 +57,7 @@ Exemplaire* lireFichier(std::string nom)
 }
 
 
-bool relieEntree(std::vector<std::vector<float> >& sentiers, int point, std::vector<int>& types, int nbPoints, std::vector<int>& visites)
+bool relieEntree(std::vector<std::vector<double> >& sentiers, int point, std::vector<int>& types, int nbPoints, std::vector<int>& visites)
 {
   for (int i = 0; i < nbPoints; ++i)
   {
@@ -87,7 +87,7 @@ bool relieEntree(std::vector<std::vector<float> >& sentiers, int point, std::vec
 int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<int>& visites)
 {
     int nbPoints = e.getNbPoints();
-	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	std::vector<std::vector<double> > sentiers = s.getSentiers();
 	std::vector<int> nbSentiers = s.getNbIncidents();
 	std::vector<int> maxSentiers = e.getMaxSentiers();
 	std::vector<int> types = e.getTypes();
@@ -113,9 +113,9 @@ int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<int>& 
 {
 	int nbPoints = e.getNbPoints();
 	int mini = nbPoints, miniCout = 0, noeudEnfant;
-	float coutMin = LONG_MAX;
-	std::vector<std::vector<float> > couts = e.getCouts();
-	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	double coutMin = LONG_MAX;
+	std::vector<std::vector<double> > couts = e.getCouts();
+	std::vector<std::vector<double> > sentiers = s.getSentiers();
 	std::vector<int> nbSentiers = s.getNbIncidents();
 	std::vector<int> maxSentiers = e.getMaxSentiers();
 	std::vector<int> types = e.getTypes();
@@ -161,8 +161,8 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 	int nbPoints = e.getNbPoints();
 	int noeudEnfant;
 	int mini = nbPoints;
-	std::vector<std::vector<float> > couts = e.getCouts();
-	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	std::vector<std::vector<double> > couts = e.getCouts();
+	std::vector<std::vector<double> > sentiers = s.getSentiers();
 	std::vector<int> nbSentiers = s.getNbIncidents();
 	std::vector<int> maxSentiers = e.getMaxSentiers();
 	std::vector<int> types = e.getTypes();
@@ -176,21 +176,21 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
             noeud = noeudEnfant;
     }
 
-	std::map<float, int> chemins;
+	std::map<double, int> chemins;
 	auto it = couts[noeud].begin();
 	int i = 0;
 	while(it != couts[noeud].end())
     {
         if (*it > 0 && sentiers[noeud][i] == 0 && types[i] != PT_DE_VUE && nbSentiers[i] <= maxSentiers[i])
         {
-            chemins.insert(std::pair<float, int>(*it, i));
+            chemins.insert(std::pair<double, int>(*it, i));
         }
         i++;
         ++it;
     }
 
         auto mapIt = chemins.begin(); // map deja triee par defaut
-        float nouveauCout = s.getCoutTotal() + mapIt->first;
+        double nouveauCout = s.getCoutTotal() + mapIt->first;
         mini = mapIt->second;
         while(s.estTabou(nouveauCout) && mapIt != chemins.end())
         {
@@ -210,26 +210,26 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 
 int sentierMax(Solution& s, int noeud)
 {
-	std::vector<std::vector<float> > sentiers = s.getSentiers();
+	std::vector<std::vector<double> > sentiers = s.getSentiers();
     std::vector<int> nbSentiers = s.getNbIncidents();
 	int nbPoints = s.getNbPoints();
     int maxi = nbPoints;
 
-	std::map<float, int> chemins;
+	std::map<double, int> chemins;
 	auto it = sentiers[noeud].begin();
 	int i = 0;
 	while(it != sentiers[noeud].end())
     {
         if (*it > 0)
         {
-            chemins.insert(std::pair<float, int>(*it, i));
+            chemins.insert(std::pair<double, int>(*it, i));
         }
         ++it;
         i++;
     }
 
     auto mapIt = chemins.rbegin(); // map deja triee par defaut
-	float nouveauCout = s.getCoutTotal() - mapIt->first;
+	double nouveauCout = s.getCoutTotal() - mapIt->first;
 	maxi = mapIt->second;
 	while(s.estTabou(nouveauCout) && mapIt != chemins.rend())
     {

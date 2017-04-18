@@ -7,14 +7,14 @@ Exemplaire::Exemplaire(int nbPoints) : nbPoints(nbPoints)
 
   maxSentiers = std::vector<int>(nbPoints);
 
-  couts = std::vector<std::vector<float> >(nbPoints, std::vector<float>(nbPoints, 0));
+  couts = std::vector<std::vector<double> >(nbPoints, std::vector<double>(nbPoints, 0));
 }
 
-Exemplaire::Exemplaire(int nbPoints, std::vector<int>& types, std::vector<int>& maxSentiers, std::vector<std::vector<float> >& couts) : nbPoints(nbPoints)
+Exemplaire::Exemplaire(int nbPoints, std::vector<int>& types, std::vector<int>& maxSentiers, std::vector<std::vector<double> >& couts) : nbPoints(nbPoints)
 {
   this->types = std::vector<int>(types);
   this->maxSentiers = std::vector<int>(maxSentiers);
-  this->couts = std::vector<std::vector<float> >(couts);
+  this->couts = std::vector<std::vector<double> >(couts);
 }
 
 Exemplaire::~Exemplaire()
@@ -36,7 +36,7 @@ void Exemplaire::setMaxSentiers(std::vector<int>& maxSentiers)
   this->maxSentiers = maxSentiers;
 }
 
-void Exemplaire::setCouts(std::vector<std::vector<float> >& couts)
+void Exemplaire::setCouts(std::vector<std::vector<double> >& couts)
 {
   this->couts = couts;
 }
@@ -56,7 +56,7 @@ std::vector<int> Exemplaire::getMaxSentiers()
   return maxSentiers;
 }
 
-std::vector<std::vector<float> > Exemplaire::getCouts()
+std::vector<std::vector<double> > Exemplaire::getCouts()
 {
   return couts;
 }

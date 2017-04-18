@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  std::vector<std::vector<float> > couts = e->getCouts();
+  std::vector<std::vector<double> > couts = e->getCouts();
   int nbPoints = e->getNbPoints();
   clock_t debut = clock();
   std::vector<int> parent = primMST(couts, nbPoints);

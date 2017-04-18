@@ -10,7 +10,7 @@
 
 Exemplaire* lireFichier(std::string nom);
 
-bool relieEntree(std::vector<std::vector<float> >& sentiers, int point, std::vector<int>& types, int nbPoints, std::vector<int>& visites);
+bool relieEntree(std::vector<std::vector<double> >& sentiers, int point, std::vector<int>& types, int nbPoints, std::vector<int>& visites);
 
 int sentierMin(int& noeud, Solution &s, Exemplaire &e);
 
