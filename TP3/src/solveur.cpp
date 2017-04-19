@@ -6,123 +6,7 @@
 #include <algorithm>
 #include <ctime>
 
-/*Solution* trouverPremiereSolution(Exemplaire& e)
-{
-  int nbPoints = e.getNbPoints();
-  std::vector<int> types = e.getTypes();
-  std::vector<int> maxSentiers = e.getMaxSentiers();
-  std::vector<std::vector<double> > couts = e.getCouts();
-  Solution* s = new Solution(nbPoints);
-  std::vector<int> nbIncidents = s->getNbIncidents();
-  std::vector<std::vector<double> > sentiers = s->getSentiers();
-
-  // Assignation vorace des points de vue
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    if (types[i] == PT_DE_VUE)
-    {
-      int min = i == 0 ? 1 : 0;
-      for (int j = 0; j < nbPoints; ++j)
-      {
-        if (i != j && couts[i][j] < couts[i][min] && types[j] != PT_DE_VUE && sentiers[i][j] == 0)
-        {
-          min = j;
-        }
-      }
-
-      s->setSentier(i, min, couts[i][min]);
-    }
-  }
-
-  // Assignation vorace des entrees en fonction des assignations precedentes
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    if (types[i] == ENTREE)
-    {
-      int min = i == 0 ? 1 : 0;
-      for (int j = 0; j < nbPoints; ++j)
-      {
-        if (i != j && couts[i][j] < couts[i][min] && types[j] != PT_DE_VUE && sentiers[i][j] == 0)
-        {
-          min = j;
-        }
-      }
-
-      if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min] < maxSentiers[min])
-      {
-        s->setSentier(i, min, couts[i][min]);
-      }
-    }
-  }
-
-  // Assignation vorace des etapes en fonction des assignations precedentes
-  std::vector<int> visites = new bool[nbPoints];
-  for (int i = 0; i < nbPoints; ++i)
-  {
-    if (types[i] == ETAPE)
-    {
-      for (int j = 0; j < nbPoints; ++j)
-      {
-        visites[j] = false;
-      }
-      visites[i] = true;
-      while (nbIncidents[i] < 2)
-      {
-        int min;
-        int min_deux;
-        if (i == 0)
-        {
-          min = couts[i][1] < couts[i][2] ? 1 : 2;
-          min_deux = min == 1 ? 2 : 1;
-        }
-        else if (i == 1)
-        {
-          min = couts[i][0] < couts[i][2] ? 0 : 2;
-          min_deux = min == 0 ? 3 : 0;
-        }
-        else
-        {
-          min = couts[i][0] < couts[i][1] ? 0 : 1;
-          min_deux = min == 0 ? 1 : 0;
-        }
-
-        for (int j = 0; j < nbPoints; ++j)
-        {
-          if (visites[j] == false)
-          {
-            if (i != j && couts[i][j] < couts[i][min_deux] && types[j] != PT_DE_VUE && sentiers[i][j] == 0)
-            {
-              if (couts[i][j] < couts[i][min])
-              {
-                min_deux = min;
-                min = j;
-              }
-              else
-              {
-                min_deux = j;
-              }
-            }
-          }
-        }
-
-        visites[min] = true;
-        visites[min_deux] = true;
-        if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min] < maxSentiers[min])
-        {
-          s->setSentier(i, min, couts[i][min]);
-        }
-        if (nbIncidents[i] < maxSentiers[i] && nbIncidents[min_deux] < maxSentiers[min_deux])
-        {
-          s->setSentier(i, min_deux, couts[i][min_deux]);
-        }
-      }
-    }
-  }
-
-  return s;
-}*/
-
-// From  : http://www.geeksforgeeks.org/greedy-algorithms-set-5-prims-minimum-spanning-tree-mst-2/
+// Les 3 méthodes suivantes sont adaptess de  : http://www.geeksforgeeks.org/greedy-algorithms-set-5-prims-minimum-spanning-tree-mst-2/
 // A utility function to find the vertex with minimum key value, from
 // the set of vertices not yet included in MST
 int minKey(std::vector<double>& key, std::vector<int>& mstSet, int nbPoints)
@@ -194,6 +78,7 @@ std::vector<int> primMST(std::vector<std::vector<double> >& graph, int nbPoints)
      //printMST(parent, nbPoints, graph, nbPoints);
 }
 
+// methode principale de d'amelioration locale
 void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp, clock_t debut)
 {
 	int nbPoints = e.getNbPoints();
@@ -208,26 +93,27 @@ void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp
 	s.addTabou(s.getCoutTotal());
 	//s.afficher();
 
+        // on commence par verifier si l'arbre sous-tendant minimal retourne par l'algorithme de Prim n'est pas deja une solution
 	if (valide.first == OK)
 	{
-		if (afficherSol)
-        {
+	  if (afficherSol)
+          {
             s.afficher();
-        }
-        if (afficherTmp)
-        {
+          }
+          if (afficherTmp)
+          {
             std::cout << "Temps de calcul jusqu'a maintenant : " << (clock() - debut) / CLOCKS_PER_SEC << " secondes" << std::endl;
-        }
-        meilleurCout = s.getCoutTotal();
+          }
+          meilleurCout = s.getCoutTotal();
 	}
 
 	while(1)
 	{
 	    sentiers = s.getSentiers();
 		//std::cout << valide.first << std::endl;
-		switch(valide.first)
+		switch(valide.first) // on défini un voisinage selon le type d'erreur detecte
 		{
-			case PT_DE_VUE:
+			case PT_DE_VUE: // ce cas n'est pas utilise dans la version actuelle, MAXI est equivalent
 				for (int i = 0; i < nbPoints; ++i)
 				{
 					double cout = sentiers[valide.second][i];
@@ -247,55 +133,63 @@ void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp
 				}
 				arcs.clear();
 				break;
-			case LIEN:
-				mini = sentierMin(valide.second, s, e);
-				s.setSentier(valide.second, mini, couts[valide.second][mini]);
-
-				//std::cout << valide.second << "-" << mini << std::endl;
-				break;
+			 // dans le cas d'une erreur de lien a une entree, on ajoute un sentier le 
+                         // moins couteux possible au point problematique
+                        case LIEN:
+			      mini = sentierMin(valide.second, s, e);
+		              s.setSentier(valide.second, mini, couts[valide.second][mini]);
+			      //std::cout << valide.second << "-" << mini << std::endl;
+                              break;
+                        // si un point etape n'a pas au moins deux sentiers incidents, on lui en ajoute un de cout minimum
 			case ETAPE:
-				mini = sentierMin(valide.second, s, e);
-				s.setSentier(valide.second, mini, couts[valide.second][mini]);
-				break;
+			      mini = sentierMin(valide.second, s, e);
+			      s.setSentier(valide.second, mini, couts[valide.second][mini]);
+			       //std::cout << valide.second << "-" << mini << std::endl;
+			      break;
+                        // Si un point n'a aucun sentier et n'est donc pas present dans la configuration, on l'ajoute
 			case ENTREE:
-				mini = sentierMin(valide.second, s, e);
-				s.setSentier(valide.second, mini, couts[valide.second][mini]);
-				break;
+			      mini = sentierMin(valide.second, s, e);
+			      s.setSentier(valide.second, mini, couts[valide.second][mini]);
+			       //std::cout << valide.second << "-" << mini << std::endl;
+			      break;
+                        // si un maximum des depasse, on supprime le sentier le plus cher du point concerné
 			case MAXI:
-			    while (s.getNbIncidents()[valide.second] > maxSentiers[valide.second])
-                {
-                    maxi = sentierMax(s, valide.second);
-                    s.deleteSentier(valide.second, maxi);
-                }
-				break;
-            case OK:
-                if (s.getCoutTotal() < meilleurCout)
-                {
-                    if (afficherSol)
-                    {
-                        s.afficher();
-                        std::cout << s.getCoutTotal() << std::endl;
-                    }
-                    if (afficherTmp)
-                    {
-                        std::cout << "Temps de calcul jusqu'a maintenant : " << (clock() - debut) / CLOCKS_PER_SEC  << " secondes" << std::endl;
-                    }
-                    meilleurCout = s.getCoutTotal();
-                }
-                deletePlusCherSentier(s);
-                break;
+			      while (s.getNbIncidents()[valide.second] > maxSentiers[valide.second])
+                              {
+                                maxi = sentierMax(s, valide.second);
+                                s.deleteSentier(valide.second, maxi);
+                              }
+			      break;
+                        // dans le cas ou la solution est valide, on l'affiche si c'est la meilleure a ce point
+                        case OK:
+                              if (s.getCoutTotal() < meilleurCout)
+                              {
+                                if (afficherSol)
+                                {
+                                  s.afficher();
+                                  //std::cout << s.getCoutTotal() << std::endl;
+                                }
+                                if (afficherTmp)
+                                {
+                                  std::cout << "Temps de calcul jusqu'a maintenant : " << (clock() - debut) / CLOCKS_PER_SEC  << " secondes" << std::endl;
+                                }
+                                meilleurCout = s.getCoutTotal();
+                              } 
+                              deletePlusCherSentier(s);
+                              break;
 			default:
-				break;
+			      break;
 		}
 
-
+        // on ajoute la configuration actuelle a la liste tabou et on relance la verification
         s.addTabou(s.getCoutTotal());
-		//s.afficher();
-
-		valide = s.verifier(e);
-	}
+	valide = s.verifier(e);
+        //s.afficher();
+    }
 }
 
+
+// fonction supprimant le sentier le plus cher du point le plus connecté
 void deletePlusCherSentier(Solution& s)
 {
     auto nbIncidents = s.getNbIncidents();

@@ -26,6 +26,7 @@ void Solution::setNbIncidents(std::vector<int>& nbIncidents)
   this->nbIncidents = nbIncidents;
 }
 
+// Methode pour ajouter un sentier a la configuration courante
 void Solution::setSentier(int depart, int arrivee, double cout)
 {
   sentiers[depart][arrivee] = cout;
@@ -36,6 +37,7 @@ void Solution::setSentier(int depart, int arrivee, double cout)
   coutTotal += cout;
 }
 
+// methode pour retirer un sentier de la configuration courante
 void Solution::deleteSentier(int depart, int arrivee)
 {
   double cout = sentiers[depart][arrivee];
@@ -86,6 +88,7 @@ std::deque<double> Solution::getTabou()
     return tabou;
 }
 
+// methode de verification de la solution courante par rapport aux contraintes a respecter
 std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
 {
   // 2. Chaque point doit etre present (Chaque entrée du parc doit être le départ d'au moins un sentier)
@@ -136,6 +139,7 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
         return std::pair<Erreur, int>(LIEN, i);
       }
       std::fill(visites.begin(), visites.end(), false);
+      // appel de la fonction recursive relieEntree qui va verifier si le point i est connecte a une entree
       bool relie = relieEntree(sentiers, i, types, nbPoints, visites);
       if (!relie)
       {
@@ -144,7 +148,7 @@ std::pair<Erreur, int> Solution::verifier(Exemplaire& e)
     }
   }
 
-  return std::pair<Erreur, int>(OK, 0);
+  return std::pair<Erreur, int>(OK, 0); // aucune erreur
 }
 
 void Solution::afficher()
@@ -177,6 +181,7 @@ double Solution::calculer()
   return coutTotal;
 }
 
+// methode permettant de savoir si une valeur de cout total est presente dans la liste tabou ou pas
 bool Solution::estTabou(double coutTotal)
 {
     return std::find(tabou.begin(), tabou.end(), coutTotal) != tabou.end();

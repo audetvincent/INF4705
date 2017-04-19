@@ -23,10 +23,10 @@ public:
   std::vector<std::vector<double> > getCouts();
 
 private:
-  int nbPoints;
-  std::vector<int> types;
-  std::vector<int> maxSentiers;
-  std::vector<std::vector<double> > couts;
+  int nbPoints; // nombre de points dans le parc
+  std::vector<int> types; // vecteur indiquant le type de chaque point
+  std::vector<int> maxSentiers; // vecteur indiquant pour chaque point son maximum de sentiers incidents autorise
+  std::vector<std::vector<double> > couts; // matrice des couts entre chaque point
 };
 
 #endif

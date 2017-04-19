@@ -12,6 +12,7 @@
 
 int main(int argc, char* argv[])
 {
+  // traitement des parametres
   bool afficher = false;
   bool temps = false;
   if (argc == 4)
@@ -31,6 +32,7 @@ int main(int argc, char* argv[])
     }
   }
 
+  // creation de l'exemplaire a partir du fichier
   Exemplaire* e = lireFichier(argv[1]);
 
   if (e == nullptr)
@@ -39,6 +41,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
+  // creation de la configuration de depart avec l'algorithme de Prim
   std::vector<std::vector<double> > couts = e->getCouts();
   int nbPoints = e->getNbPoints();
   clock_t debut = clock();

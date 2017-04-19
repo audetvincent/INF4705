@@ -33,11 +33,11 @@ public:
   bool estTabou(double coutTotal);
 
 private:
-  int nbPoints;
-  std::vector<int> nbIncidents;
-  std::vector<std::vector<double> > sentiers;
-  double coutTotal;
-  std::deque<double> tabou;
+  int nbPoints; // nombre de points dans le parc
+  std::vector<int> nbIncidents; // vecteur indiquant pour chaque point le nombre de sentiers incidents
+  std::vector<std::vector<double> > sentiers; // matrice representant la solution courante
+  double coutTotal; // cout total de la configuration courante
+  std::deque<double> tabou; // liste tabou des couts des configurations
 };
 
 #endif

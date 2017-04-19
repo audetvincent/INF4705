@@ -3,6 +3,7 @@
 #include <map>
 #include <algorithm>
 
+// fonction creant un exemplaire a partir d'un fichier
 Exemplaire* lireFichier(std::string nom)
 {
   std::ifstream fichier(nom, std::ios::in);
@@ -56,7 +57,7 @@ Exemplaire* lireFichier(std::string nom)
   }
 }
 
-
+// fonction recursive capable de determiner si il existe un chemin vers une entree a partir d'un point donne
 bool relieEntree(std::vector<std::vector<double> >& sentiers, int point, std::vector<int>& types, int nbPoints, std::vector<int>& visites)
 {
   for (int i = 0; i < nbPoints; ++i)
@@ -83,79 +84,33 @@ bool relieEntree(std::vector<std::vector<double> >& sentiers, int point, std::ve
   return false;
 }
 
-
+// Fonction retournant pour un noeud donne, son premier enfant dont le nombre de sentiers incidents est inferieur au maximum autorise
 int trouverNoeudEnfant(Solution &s, Exemplaire &e, int noeud, std::vector<int>& visites)
 {
     int nbPoints = e.getNbPoints();
-	std::vector<std::vector<double> > sentiers = s.getSentiers();
-	std::vector<int> nbSentiers = s.getNbIncidents();
-	std::vector<int> maxSentiers = e.getMaxSentiers();
-	std::vector<int> types = e.getTypes();
+    std::vector<std::vector<double> > sentiers = s.getSentiers();
+    std::vector<int> nbSentiers = s.getNbIncidents();
+    std::vector<int> maxSentiers = e.getMaxSentiers();
+    std::vector<int> types = e.getTypes();
 
     for(int i = 0; i < nbPoints; ++i)
-	{
-		if(sentiers[noeud][i] > 0 && nbSentiers[i] < maxSentiers[i] && visites[i] == 0)
-			return i;
-	}
-	for(int i = 0; i < nbPoints; ++i)
-	{
-		if(sentiers[noeud][i] > 0 && types[i] != PT_DE_VUE && visites[i] == 0)
+    {
+	if(sentiers[noeud][i] > 0 && nbSentiers[i] < maxSentiers[i] && visites[i] == 0)
+	return i;
+    }
+    for(int i = 0; i < nbPoints; ++i)
+    {
+	if(sentiers[noeud][i] > 0 && types[i] != PT_DE_VUE && visites[i] == 0)
         {
             visites[i] = 1;
             return trouverNoeudEnfant(s, e, i, visites);
         }
-	}
+    }
 
-	return nbPoints;
+    return nbPoints;
 }
 
-/*int sentierMin(int& noeud, Solution &s, Exemplaire &e)
-{
-	int nbPoints = e.getNbPoints();
-	int mini = nbPoints, miniCout = 0, noeudEnfant;
-	double coutMin = LONG_MAX;
-	std::vector<std::vector<double> > couts = e.getCouts();
-	std::vector<std::vector<double> > sentiers = s.getSentiers();
-	std::vector<int> nbSentiers = s.getNbIncidents();
-	std::vector<int> maxSentiers = e.getMaxSentiers();
-	std::vector<int> types = e.getTypes();
-	std::pair<int, int> prec = s.getPrec();
-
-	std::vector<int> visites(nbPoints, false);
-	visites[noeud] = true;
-	if (nbSentiers[noeud] >= maxSentiers[noeud])
-    {
-        noeudEnfant = trouverNoeudEnfant(s, e, noeud, visites);
-        if (noeudEnfant != nbPoints)
-            noeud = noeudEnfant;
-    }
-
-	for (int i = 0; i < nbPoints; ++i)
-	{
-		if (couts[noeud][i] > 0 && couts[noeud][i] < coutMin
-				&& sentiers[noeud][i] == 0)
-        {
-            if (types[i] != PT_DE_VUE)
-                miniCout = i;
-            if(nbSentiers[i] < maxSentiers[i])
-            {
-                mini = i;
-            }
-            coutMin = couts[noeud][i];
-		}
-	}
-
-	if ((mini == nbPoints) ||
-        (noeud == prec.first && mini == prec.second) ||
-        (noeud == prec.second && mini == prec.first))
-    {
-        s.setPrec(noeud, miniCout);
-        return miniCout;
-    }
-    s.setPrec(noeud, mini);
-	return mini;
-}*/
-
+// Fonction retournant pour un point donne la destination du sentier de cout minimum que l'on pourrait ajouter
 int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 {
 	int nbPoints = e.getNbPoints();
@@ -167,27 +122,31 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 	std::vector<int> maxSentiers = e.getMaxSentiers();
 	std::vector<int> types = e.getTypes();
 
+        // si le noeud est plein, on doit trouver un de ses enfants (uniquement dans le cas d'une erreur LIEN)
 	std::vector<int> visites(nbPoints, false);
 	visites[noeud] = true;
 	if (nbSentiers[noeud] >= maxSentiers[noeud])
-    {
-        noeudEnfant = trouverNoeudEnfant(s, e, noeud, visites);
-        if (noeudEnfant != nbPoints)
+        {
+          noeudEnfant = trouverNoeudEnfant(s, e, noeud, visites);
+          if (noeudEnfant != nbPoints)
             noeud = noeudEnfant;
-    }
+        }
 
+        // on construit une map pour profiter du fait qu'elle soit deja triee par defaut et de cette maniere on peut essayer
+        // plusieurs candidats d'affile dans le cas ou une certaine configuration serait deja dans la liste tabou
 	std::map<double, int> chemins;
 	auto it = couts[noeud].begin();
 	int i = 0;
 	while(it != couts[noeud].end())
-    {
-        if (*it > 0 && sentiers[noeud][i] == 0 && types[i] != PT_DE_VUE && nbSentiers[i] <= maxSentiers[i])
         {
+          // on accepte de faire des liens avec des noeuds deja pleins pour faire avancer la recherche et eviter d'etre trop vite coinces
+          if (*it > 0 && sentiers[noeud][i] == 0 && types[i] != PT_DE_VUE && nbSentiers[i] <= maxSentiers[i])
+          {
             chemins.insert(std::pair<double, int>(*it, i));
+          }
+          i++;
+          ++it;
         }
-        i++;
-        ++it;
-    }
 
         auto mapIt = chemins.begin(); // map deja triee par defaut
         double nouveauCout = s.getCoutTotal() + mapIt->first;
@@ -200,6 +159,7 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
             mini = mapIt->second;
         }
 
+        // si toutes les configurations sont dans la liste tabou 
         if (mapIt == chemins.end())
         {
             mini = chemins.rbegin()->second;
@@ -208,17 +168,20 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
 	return mini;
 }
 
+// fonction retournant pour un point donnee son sentier incident de cout maximum
 int sentierMax(Solution& s, int noeud)
 {
-	std::vector<std::vector<double> > sentiers = s.getSentiers();
+    std::vector<std::vector<double> > sentiers = s.getSentiers();
     std::vector<int> nbSentiers = s.getNbIncidents();
-	int nbPoints = s.getNbPoints();
+    int nbPoints = s.getNbPoints();
     int maxi = nbPoints;
 
-	std::map<double, int> chemins;
-	auto it = sentiers[noeud].begin();
-	int i = 0;
-	while(it != sentiers[noeud].end())
+    // on construit une map pour profiter du fait qu'elle soit deja triee par defaut et de cette maniere on peut essayer
+    // plusieurs candidats d'affile dans le cas ou une certaine configuration serait deja dans la liste tabou
+    std::map<double, int> chemins;
+    auto it = sentiers[noeud].begin();
+    int i = 0;
+    while(it != sentiers[noeud].end())
     {
         if (*it > 0)
         {
@@ -229,9 +192,9 @@ int sentierMax(Solution& s, int noeud)
     }
 
     auto mapIt = chemins.rbegin(); // map deja triee par defaut
-	double nouveauCout = s.getCoutTotal() - mapIt->first;
-	maxi = mapIt->second;
-	while(s.estTabou(nouveauCout) && mapIt != chemins.rend())
+    double nouveauCout = s.getCoutTotal() - mapIt->first;
+    maxi = mapIt->second;
+    while(s.estTabou(nouveauCout) && mapIt != chemins.rend())
     {
         nouveauCout += mapIt->first;
         ++mapIt;
@@ -244,6 +207,6 @@ int sentierMax(Solution& s, int noeud)
         maxi = chemins.begin()->second;
     }
 
-	return maxi;
+    return maxi;
 }
 
