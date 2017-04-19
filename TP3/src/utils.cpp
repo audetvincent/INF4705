@@ -162,7 +162,7 @@ int sentierMin(int& noeud, Solution &s, Exemplaire &e)
         mini = mapIt->second;
     }
 
-    // si toutes les configurations sont dans la liste tabou
+    // si toutes les configurations sont dans la liste tabou on sait pas trop quoi faire alors on retourne le moins probable
     if (mapIt == chemins.end())
     {
         mini = chemins.rbegin()->second;
@@ -205,6 +205,7 @@ int sentierMax(Solution& s, int noeud)
         maxi = mapIt->second;
     }
 
+    // si toutes les configurations sont dans la liste tabou on sait pas trop quoi faire alors on retourne le moins probable
     if (mapIt == chemins.rend())
     {
         maxi = chemins.begin()->second;
