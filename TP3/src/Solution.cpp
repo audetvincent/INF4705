@@ -52,7 +52,7 @@ void Solution::deleteSentier(int depart, int arrivee)
 void Solution::addTabou(int coutTotal)
 {
     tabou.push_back(coutTotal);
-    /*if (tabou.size() > 20000)
+    /*if (tabou.size() > 30000)
     {
         tabou.pop_front();
     }*/
