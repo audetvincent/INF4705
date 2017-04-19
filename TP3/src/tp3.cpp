@@ -12,50 +12,50 @@
 
 int main(int argc, char* argv[])
 {
-  // traitement des parametres
-  bool afficher = false;
-  bool temps = false;
-  if (argc == 4)
-  {
-    afficher = true;
-    temps = true;
-  }
-  else if (argc == 3)
-  {
-    if (strncmp(argv[2], "-p", strlen(argv[2])) == 0)
+    // traitement des parametres
+    bool afficher = false;
+    bool temps = false;
+    if (argc == 4)
     {
-      afficher = true;
+        afficher = true;
+        temps = true;
     }
-    else if (strncmp(argv[2], "-t", strlen(argv[2])) == 0)
+    else if (argc == 3)
     {
-      temps = true;
+        if (strncmp(argv[2], "-p", strlen(argv[2])) == 0)
+        {
+            afficher = true;
+        }
+        else if (strncmp(argv[2], "-t", strlen(argv[2])) == 0)
+        {
+            temps = true;
+        }
     }
-  }
 
-  // creation de l'exemplaire a partir du fichier
-  Exemplaire* e = lireFichier(argv[1]);
+    // creation de l'exemplaire a partir du fichier
+    Exemplaire* e = lireFichier(argv[1]);
 
-  if (e == nullptr)
-  {
-    std::cout << "Erreur de création du probleme" << std::endl;
+    if (e == nullptr)
+    {
+        std::cout << "Erreur de création du probleme" << std::endl;
+        return 0;
+    }
+
+    // creation de la configuration de depart avec l'algorithme de Prim
+    std::vector<std::vector<int> > couts = e->getCouts();
+    int nbPoints = e->getNbPoints();
+    clock_t debut = clock();
+    std::vector<int> parent = primMST(couts, nbPoints);
+
+    Solution* s = new Solution(e->getNbPoints());
+
+    for (int i = 1; i < e->getNbPoints(); i++)
+        s->setSentier(parent[i], i, e->getCouts()[i][parent[i]]);
+
+    amelioration(*s, *e, afficher, temps, debut);
+
+    delete s;
+    delete e;
+
     return 0;
-  }
-
-  // creation de la configuration de depart avec l'algorithme de Prim
-  std::vector<std::vector<double> > couts = e->getCouts();
-  int nbPoints = e->getNbPoints();
-  clock_t debut = clock();
-  std::vector<int> parent = primMST(couts, nbPoints);
-
-  Solution* s = new Solution(e->getNbPoints());
-
-  for (int i = 1; i < e->getNbPoints(); i++)
-    s->setSentier(parent[i], i, e->getCouts()[i][parent[i]]);
-
-  amelioration(*s, *e, afficher, temps, debut);
-
-  delete s;
-  delete e;
-
-  return 0;
 }
