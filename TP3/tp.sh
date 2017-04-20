@@ -21,4 +21,4 @@ esac
 shift
 done
 
-./src/tp3 $EX_PATH $OPTIONS
+./tp3 $EX_PATH $OPTIONS

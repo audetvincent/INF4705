@@ -167,7 +167,7 @@ void amelioration(Solution &s, Exemplaire &e, bool afficherSol, bool afficherTmp
                 if (afficherSol)
                 {
                     s.afficher();
-                    std::cout << s.getCoutTotal() << std::endl;
+                    //std::cout << s.getCoutTotal() << std::endl;
                 }
                 if (afficherTmp)
                 {
